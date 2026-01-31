@@ -59,7 +59,8 @@ PATCHES := \
 	cpo/sql/patches/p6_ci_guard_change_control.sql \
 	cpo/sql/patches/011_drift_detection.sql \
 	cpo/sql/patches/011_drift_detection_selftest.sql \
-	cpo/sql/patches/p2_contract_proof.sql
+	cpo/sql/patches/p2_contract_proof.sql \
+	cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql
 
 ALL_SQL := $(MIGRATIONS) $(PATCHES)
 

@@ -255,16 +255,16 @@ BEGIN
      WHERE gr->>'status' = 'ERROR';
 
   EXCEPTION WHEN OTHERS THEN
-    -- Fail-closed: any evaluation error results in FAIL
-    v_outcome := 'FAIL';
-    v_gate_results := '[]'::jsonb;
-    v_errors := jsonb_build_array(
-      jsonb_build_object(
-        'error_type', 'GATE_EVALUATION_ERROR',
-        'sqlstate', SQLSTATE,
-        'message', SQLERRM
-      )
-    );
+    -- FAIL-CLOSED (I4, Phase 3.1): Gate evaluation exceptions propagate.
+    -- If evaluate_gates itself throws (structural failure, missing function, etc.),
+    -- this is a kernel failure — the commit MUST abort, not silently downgrade.
+    -- Per-gate errors (missing field, unknown operator) are handled INSIDE
+    -- evaluate_gates and returned as structured gate results with status=ERROR.
+    -- This handler only fires for truly unexpected failures.
+    RAISE EXCEPTION 'KERNEL_GATE_EVALUATION_FAILED: %', SQLERRM
+      USING ERRCODE = 'CPO99',
+            DETAIL = 'evaluate_gates threw an unhandled exception. Commit aborted (fail-closed, I4).',
+            HINT = 'original_sqlstate=' || SQLSTATE;
   END;
   -- ============================================================
 
