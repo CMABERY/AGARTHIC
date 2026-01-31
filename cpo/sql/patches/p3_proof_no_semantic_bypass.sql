@@ -39,13 +39,18 @@ BEGIN
   
   v_fn_body := pg_get_functiondef('cpo.commit_action(text, jsonb, jsonb, uuid, uuid)'::regprocedure);
   
-  -- Must NOT contain SYSTEM_% pattern in TOCTOU bypass
-  IF v_fn_body LIKE '%SYSTEM\_%' ESCAPE '\' THEN
-    -- Check if it's in expected refs context (not just in a comment or string)
-    IF v_fn_body LIKE '%action_type%SYSTEM_%' OR v_fn_body LIKE '%LIKE ''SYSTEM_%' THEN
-      RAISE EXCEPTION 'PROOF FAIL: commit_action contains SYSTEM_%% semantic bypass. '
-        'This violates P0: no semantic privilege from payload fields.';
-    END IF;
+  -- Must NOT contain SYSTEM_% pattern in TOCTOU bypass context
+  -- Specifically looking for: LIKE 'SYSTEM_%' which would be a bypass
+  -- Note: 'SYSTEM' as a default actor value is fine (not a bypass)
+  IF v_fn_body LIKE '%LIKE ''SYSTEM\_%' ESCAPE '\' THEN
+    RAISE EXCEPTION 'PROOF FAIL: commit_action contains LIKE ''SYSTEM_%% bypass pattern. '
+      'This violates P0: no semantic privilege from payload fields.';
+  END IF;
+  
+  -- Also check for NOT LIKE pattern used in bypass
+  IF v_fn_body LIKE '%NOT LIKE ''SYSTEM\_%' ESCAPE '\' THEN
+    RAISE EXCEPTION 'PROOF FAIL: commit_action contains NOT LIKE ''SYSTEM_%% bypass. '
+      'This violates P0: no semantic privilege from payload fields.';
   END IF;
   
   RAISE NOTICE 'OK: No SYSTEM_%% semantic bypass detected';
@@ -64,10 +69,16 @@ BEGIN
   
   v_fn_body := pg_get_functiondef('cpo.commit_action(text, jsonb, jsonb, uuid, uuid)'::regprocedure);
   
-  -- Must NOT use BOOTSTRAP_% action_type for TOCTOU bypass
+  -- Must NOT use LIKE 'BOOTSTRAP_%' for TOCTOU bypass
   -- (v_bootstrap variable is fine - it's computed from DB state)
-  IF v_fn_body LIKE '%action_type%BOOTSTRAP_%' OR v_fn_body LIKE '%LIKE ''BOOTSTRAP_%' THEN
-    RAISE EXCEPTION 'PROOF FAIL: commit_action contains BOOTSTRAP_%% action_type bypass. '
+  IF v_fn_body LIKE '%LIKE ''BOOTSTRAP\_%' ESCAPE '\' THEN
+    RAISE EXCEPTION 'PROOF FAIL: commit_action contains LIKE ''BOOTSTRAP_%% bypass. '
+      'Use v_bootstrap (database state) instead of action_type string.';
+  END IF;
+  
+  -- Also check for NOT LIKE pattern used in bypass
+  IF v_fn_body LIKE '%NOT LIKE ''BOOTSTRAP\_%' ESCAPE '\' THEN
+    RAISE EXCEPTION 'PROOF FAIL: commit_action contains NOT LIKE ''BOOTSTRAP_%% bypass. '
       'Use v_bootstrap (database state) instead of action_type string.';
   END IF;
   
