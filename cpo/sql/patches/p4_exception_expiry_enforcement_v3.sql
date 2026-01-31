@@ -75,7 +75,7 @@ BEGIN
     FROM cpo.cpo_exceptions e
    WHERE e.agent_id = p_agent_id
      AND e.content->>'exception_id' = p_exception_id::text
-   ORDER BY e.id DESC
+   ORDER BY e.created_at DESC
    LIMIT 1;
 
   IF v_exc IS NULL THEN
