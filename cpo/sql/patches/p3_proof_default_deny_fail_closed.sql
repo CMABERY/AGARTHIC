@@ -197,15 +197,15 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Unknown operator should produce ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'UNKNOWN_OPERATOR' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type UNKNOWN_OPERATOR, got %', v_error_type;
+  IF v_error_type <> 'RULE_EVAL_ERROR' THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
   IF v_outcome <> 'FAIL' THEN
     RAISE EXCEPTION 'PROOF FAIL: Unknown operator should produce FAIL outcome, got %', v_outcome;
   END IF;
   
-  RAISE NOTICE 'OK: Unknown operator → ERROR (UNKNOWN_OPERATOR) → FAIL';
+  RAISE NOTICE 'OK: Unknown operator → ERROR (RULE_EVAL_ERROR) → FAIL';
   RAISE NOTICE '';
 END $$;
 
@@ -261,15 +261,15 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Disallowed root should produce ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'DISALLOWED_ROOT' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type DISALLOWED_ROOT, got %', v_error_type;
+  IF v_error_type <> 'RULE_EVAL_ERROR' THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
   IF v_outcome <> 'FAIL' THEN
     RAISE EXCEPTION 'PROOF FAIL: Disallowed root should produce FAIL outcome, got %', v_outcome;
   END IF;
   
-  RAISE NOTICE 'OK: Disallowed root → ERROR (DISALLOWED_ROOT) → FAIL';
+  RAISE NOTICE 'OK: Disallowed root → ERROR (RULE_EVAL_ERROR) → FAIL';
   RAISE NOTICE '';
 END $$;
 
@@ -288,8 +288,8 @@ BEGIN
   RAISE NOTICE '  2. applied=true ONLY for PASS or PASS_WITH_EXCEPTION';
   RAISE NOTICE '  3. Artifact inserts ONLY inside IF v_applied block';
   RAISE NOTICE '  4. evaluate_gates catches ALL exceptions → ERROR → FAIL';
-  RAISE NOTICE '  5. Unknown operator → ERROR (UNKNOWN_OPERATOR) → FAIL';
-  RAISE NOTICE '  6. Disallowed pointer root → ERROR (DISALLOWED_ROOT) → FAIL';
+  RAISE NOTICE '  5. Unknown operator → ERROR (RULE_EVAL_ERROR) → FAIL';
+  RAISE NOTICE '  6. Disallowed pointer root → ERROR (RULE_EVAL_ERROR) → FAIL';
   RAISE NOTICE '';
   RAISE NOTICE 'INVARIANT: Writes proceed ONLY on explicit PASS verdict.';
   RAISE NOTICE '';

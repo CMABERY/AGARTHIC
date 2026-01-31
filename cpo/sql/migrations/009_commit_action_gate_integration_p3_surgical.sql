@@ -136,13 +136,8 @@ BEGIN
       RAISE EXCEPTION 'STALE_CONTEXT'
         USING ERRCODE='40001',
               HINT='Expected refs do not match current heads; map to HTTP 409 and retry after refresh.';
-    END IF;IF p_expected_charter_activation_id <> v_cur_charter_activation_id
-         OR p_expected_state_snapshot_id <> v_cur_state_snapshot_id THEN
-        RAISE EXCEPTION 'STALE_CONTEXT'
-          USING ERRCODE='40001',
-                HINT='Expected refs do not match current heads; map to HTTP 409 and retry after refresh.';
-      END IF;
     END IF;
+  END IF;
 
     -- Fetch current charter/state/activation content for gate evaluation
     SELECT content INTO v_charter_content
@@ -178,7 +173,7 @@ BEGIN
     IF v_activation_content IS NULL THEN
       RAISE EXCEPTION 'RESOLVED_INPUT_MISSING: Charter activation content not found for activation_id=%', v_cur_charter_activation_id
         USING ERRCODE='P0001';
-    END IF;  END IF;
+    END IF;
 
   -- ============================================================
   -- P3 GATE ENGINE (replaces P2 stub)

@@ -39,7 +39,6 @@ PATCHES := \
 	cpo/sql/patches/p2_durability_drill_wiring_v2_1.sql \
 	cpo/sql/patches/p2_proof_durability_wiring.sql \
 	cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql \
-	cpo/sql/patches/p3_policy_dsl_jsonptr_get.sql \
 	cpo/sql/patches/p3_gate_engine_missing_field_patch.sql \
 	cpo/sql/patches/p3_missing_field_semantics_patch.sql \
 	cpo/sql/patches/p3_toctou_bypass_removal_patch.sql \
