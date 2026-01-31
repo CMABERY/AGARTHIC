@@ -2,47 +2,25 @@
   "schema_version": 2,
   "canon_version": 2,
   "canon_version_rationale": "v1 audit chain invalidated by nested duplicate directory corruption; v2 establishes clean truth baseline per D1 resolution",
-  "audit_timestamp_utc": "2026-01-31T16:30:00Z",
+  "audit_timestamp_utc": "2026-01-31T17:00:00Z",
   "repo_state": {
     "file_count": 182,
-    "file_count_definition": "find . -type f | wc -l (all files, no exclusions)",
-    "file_breakdown": {
-      "sql": 29,
-      "shell": 5,
-      "json": 63,
-      "markdown": 37,
-      "javascript": 41,
-      "typescript": 1,
-      "yaml": 1,
-      "text": 3,
-      "makefile": 1,
-      "other": 1
-    },
-    "file_breakdown_sum": 182
+    "file_count_definition": "find . -type f | wc -l (all files, no exclusions)"
   },
   "authority_hashes": {
-    ".github/workflows/ci.yml": "c28cb8e57fde03deaeb04d8907b7e65a3e92aa446e6cb9fdd024e18902ce0525",
+    ".github/workflows/ci.yml": "a24f00abfd7721961f5bd1f18f189dc9ed245edbd01a391d8fb9cdec118bcedf",
     "Makefile": "2c8fd190d1ccbc499666afba7cd7c4580e69a90900c9cbd1317a492e9b72449e",
     "verify_phase1.sh": "05fa508047471c48e1ec40aebba7a0820f2fab186de1c25b3ffe46d5e59077fd",
     "cpo/sql/migrations/000_bootstrap.sql": "32ef627523cb8c9fb6b997a84d17f332cac573736baf27378c78a6b4d2b681f3",
-    "cpo/sql/MIGRATION_ORDER.md": "16d60a47aa5ebfdfe6efeffa8a56597fe375c28d7aaf137f6f2407617c4a8857",
-    "AUDIT_READINESS_CHECKLIST.md": "0597845e781367c949297ac04506433fb53c8278c92392d8f3b4a9f05470d78e",
-    "INTEGRATION_MANUAL.md": "73b01fc61e1058a61989c9806100be028e4bfec3d0ba20441804a573581ac64a",
-    "VERSION_LOCK.md": "848f6fcb523da09c5e8c09547fab8659203105f2f9aeba02f0347f460e704021",
-    "cpo/STATUS.json": "69ff605e31b1764edb3e04eab9c0c6c2d0c7e9b316aaaaaee573e14cf68aacf8",
-    "docs/keystone/CANONICALIZATION_RULES.md": "5874f8a03c15f9121f37fac54606a7c42d7df22c979203268c16c830773091a8",
-    "docs/keystone/PHASE6_REPLAY_UI_SPEC.md": "98743f2b9b0579e83c78467c47d8c2bef0b666d895b020c9be9718028b551c06",
-    "workflow-graph/packages/flowversion-conformance/bundle.schema.json": "0f302f88b213db7a39dfa58d546a538a65425ee208aa303bd8fa33ddc4be48bb",
-    "workflow-graph/packages/flowversion-conformance/goldens.json": "0f799dc0920cb0844eceb9cdc2e914236c40706955ed8e0e94123e7625dcb7b1",
-    "workflow-graph/packages/keystone-gate-runtime/certifications/adapter.http__1.0.0-test.cert.json": "68a77e6f1c41eafda9e92f317b932f87c36d165a42a986c442938823ec9c129c"
+    "cpo/sql/MIGRATION_ORDER.md": "16d60a47aa5ebfdfe6efeffa8a56597fe375c28d7aaf137f6f2407617c4a8857"
   },
   "phase_status": {
     "phase_0": "COMPLETE",
-    "phase_1": "IN_PROGRESS",
+    "phase_1": "PENDING_CI_GREEN",
     "phase_1_substeps": {
       "1.1_bootstrap_migration": "COMPLETE",
       "1.2_migration_order_doc": "COMPLETE",
-      "1.3_verify_clean_apply": "PENDING_VERIFICATION"
+      "1.3_verify_clean_apply": "PENDING_CI_GREEN"
     }
   },
   "decision_log": {
@@ -53,21 +31,27 @@
     },
     "D1.5": {
       "decision": "C — Create Makefile + update verify_phase1.sh to call it",
-      "rationale": "Rank-2 authority requires make db-apply. Creates stable contract; makes verification self-documenting; exercises full MIGRATION_ORDER.md chain.",
+      "rationale": "Rank-2 authority requires make db-apply. Creates stable contract.",
       "timestamp": "2026-01-31T16:30:00Z"
+    },
+    "D1.6": {
+      "decision": "C — Add db-apply CI job, require green",
+      "rationale": "CI job provides Rank-1 proof of I1 on every push; strongest long-term signal.",
+      "timestamp": "2026-01-31T17:00:00Z"
     }
   },
   "verification_commands": {
     "manifest_parity": "[ $(wc -l < REPO_MANIFEST.txt) -eq 182 ] && echo PASS || echo FAIL",
-    "i1_verification": "./verify_phase1.sh",
+    "i1_verification": "CI job 'db-apply' must be green",
     "makefile_entrypoint": "make db-apply"
   },
-  "verdict": "PHASE_1_IN_PROGRESS",
+  "verdict": "PHASE_1_PENDING_CI",
   "notes": [
     "Phase 0 complete: truth restored",
     "Phase 1.1 complete: 000_bootstrap.sql created",
     "Phase 1.2 complete: MIGRATION_ORDER.md created",
     "D1.5 resolved: Makefile created with db-apply target",
-    "Phase 1.3 pending: requires external verification via ./verify_phase1.sh"
+    "D1.6 resolved: CI job 'db-apply' added to ci.yml",
+    "Phase 1.3 pending: CI job must run green to prove I1"
   ]
 }

@@ -7,6 +7,81 @@ on:
     branches: [main]
 
 jobs:
+  # ==========================================================================
+  # I1 VERIFICATION: Zero-state deployability
+  # D1.6 Resolution: C — CI job exercises make db-apply on fresh Postgres
+  # ==========================================================================
+  db-apply:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: cpo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d cpo_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        env:
+          PGPASSWORD: test
+        run: |
+          for i in $(seq 1 30); do
+            if psql -h localhost -U postgres -d cpo_test -c "SELECT 1" >/dev/null 2>&1; then
+              echo "Postgres is ready"
+              exit 0
+            fi
+            echo "Waiting for Postgres... ($i/30)"
+            sleep 2
+          done
+          echo "::error::Postgres did not become ready"
+          exit 1
+
+      - name: I1 — make db-apply on fresh Postgres
+        env:
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_NAME: cpo_test
+          DB_PASSWORD: test
+        run: |
+          make db-apply
+
+      - name: Guards
+        env:
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_NAME: cpo_test
+          DB_PASSWORD: test
+        run: |
+          make db-guards
+
+      - name: Proofs
+        env:
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_NAME: cpo_test
+          DB_PASSWORD: test
+        run: |
+          make db-proofs
+
+  # ==========================================================================
+  # Existing jobs (unchanged)
+  # ==========================================================================
   flowversion-conformance:
     runs-on: ubuntu-latest
     defaults:
