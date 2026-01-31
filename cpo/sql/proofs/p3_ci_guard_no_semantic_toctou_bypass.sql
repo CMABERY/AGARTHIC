@@ -176,7 +176,7 @@ BEGIN
   ---------------------------------------------------------------------------
   v_found := false;
   FOREACH v_sig IN ARRAY v_sigs LOOP
-    IF v_sig = v_canonical_sig THEN
+    IF replace(v_sig, ' ', '') = replace(v_canonical_sig, ' ', '') THEN
       v_found := true;
     END IF;
   END LOOP;
