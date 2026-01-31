@@ -206,7 +206,7 @@ BEGIN
 
   FOR v_drift_results IN
     SELECT * FROM cpo.emit_drift_events(
-      v_agent, v_now, v_expected_activation, v_expected_state,
+      v_agent, clock_timestamp(), v_expected_activation, v_expected_state,
       3600, 3, 3, 86400  -- window, exception threshold, mode thrash threshold, staleness
     )
   LOOP
@@ -263,7 +263,7 @@ BEGIN
 
   FOR v_drift_results IN
     SELECT * FROM cpo.emit_drift_events(
-      v_agent, v_now, v_expected_activation, v_expected_state,
+      v_agent, clock_timestamp(), v_expected_activation, v_expected_state,
       3600, 3, 3, 86400
     )
   LOOP
@@ -407,7 +407,7 @@ BEGIN
     -- Emit drift - should NOT produce REPEATED_EXCEPTIONS
     FOR v_drift_results IN
       SELECT * FROM cpo.emit_drift_events(
-        v_agent2, v_now, v_expected_activation2, v_expected_state2,
+        v_agent2, clock_timestamp(), v_expected_activation2, v_expected_state2,
         3600, 3, 3, 86400
       )
     LOOP
@@ -548,7 +548,7 @@ BEGIN
     -- Try to emit drift - should FAIL because SYSTEM_DRIFT_EVENT is blocked
     FOR v_drift_results IN
       SELECT * FROM cpo.emit_drift_events(
-        v_agent3, v_now, v_expected_activation3, v_expected_state3,
+        v_agent3, clock_timestamp(), v_expected_activation3, v_expected_state3,
         3600, 3, 3, 86400
       )
     LOOP
@@ -718,7 +718,7 @@ BEGIN
     -- Emit drift events
     FOR v_drift_results IN
       SELECT * FROM cpo.emit_drift_events(
-        v_agent5, v_now, v_expected_activation5, v_expected_state5,
+        v_agent5, clock_timestamp(), v_expected_activation5, v_expected_state5,
         3600, 3, 3, 86400
       )
     LOOP
@@ -875,7 +875,7 @@ BEGIN
     -- Emit drift events
     FOR v_drift_results IN
       SELECT * FROM cpo.emit_drift_events(
-        v_agent6, v_now, v_expected_activation6, v_expected_state6,
+        v_agent6, clock_timestamp(), v_expected_activation6, v_expected_state6,
         3600, 3, 3, 86400  -- mode_thrash_threshold = 3
       )
     LOOP
@@ -1001,7 +1001,7 @@ BEGIN
     -- Emit drift events with staleness check (max_age = 1 day)
     FOR v_drift_results IN
       SELECT * FROM cpo.emit_drift_events(
-        v_agent7, v_now, v_expected_activation7, v_expected_state7,
+        v_agent7, clock_timestamp(), v_expected_activation7, v_expected_state7,
         3600, 3, 3, v_staleness_max_age
       )
     LOOP
