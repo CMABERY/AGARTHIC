@@ -35,7 +35,7 @@ DO $$
 DECLARE
   v_fn_body text;
 BEGIN
-  RAISE NOTICE '=== PROOF 1: No SYSTEM_% semantic bypass ===';
+  RAISE NOTICE '=== PROOF 1: No SYSTEM_%% semantic bypass ===';
   
   v_fn_body := pg_get_functiondef('cpo.commit_action(text, jsonb, jsonb, uuid, uuid)'::regprocedure);
   
@@ -43,12 +43,12 @@ BEGIN
   IF v_fn_body LIKE '%SYSTEM\_%' ESCAPE '\' THEN
     -- Check if it's in expected refs context (not just in a comment or string)
     IF v_fn_body LIKE '%action_type%SYSTEM_%' OR v_fn_body LIKE '%LIKE ''SYSTEM_%' THEN
-      RAISE EXCEPTION 'PROOF FAIL: commit_action contains SYSTEM_% semantic bypass. '
+      RAISE EXCEPTION 'PROOF FAIL: commit_action contains SYSTEM_%% semantic bypass. '
         'This violates P0: no semantic privilege from payload fields.';
     END IF;
   END IF;
   
-  RAISE NOTICE 'OK: No SYSTEM_% semantic bypass detected';
+  RAISE NOTICE 'OK: No SYSTEM_%% semantic bypass detected';
   RAISE NOTICE '';
 END $$;
 
@@ -60,18 +60,18 @@ DO $$
 DECLARE
   v_fn_body text;
 BEGIN
-  RAISE NOTICE '=== PROOF 2: No BOOTSTRAP_% semantic bypass ===';
+  RAISE NOTICE '=== PROOF 2: No BOOTSTRAP_%% semantic bypass ===';
   
   v_fn_body := pg_get_functiondef('cpo.commit_action(text, jsonb, jsonb, uuid, uuid)'::regprocedure);
   
   -- Must NOT use BOOTSTRAP_% action_type for TOCTOU bypass
   -- (v_bootstrap variable is fine - it's computed from DB state)
   IF v_fn_body LIKE '%action_type%BOOTSTRAP_%' OR v_fn_body LIKE '%LIKE ''BOOTSTRAP_%' THEN
-    RAISE EXCEPTION 'PROOF FAIL: commit_action contains BOOTSTRAP_% action_type bypass. '
+    RAISE EXCEPTION 'PROOF FAIL: commit_action contains BOOTSTRAP_%% action_type bypass. '
       'Use v_bootstrap (database state) instead of action_type string.';
   END IF;
   
-  RAISE NOTICE 'OK: No BOOTSTRAP_% action_type bypass detected';
+  RAISE NOTICE 'OK: No BOOTSTRAP_%% action_type bypass detected';
   RAISE NOTICE '';
 END $$;
 
@@ -169,8 +169,8 @@ BEGIN
   RAISE NOTICE '=============================================================';
   RAISE NOTICE '';
   RAISE NOTICE 'PROPERTIES PROVEN:';
-  RAISE NOTICE '  1. No SYSTEM_% semantic bypass in expected refs logic';
-  RAISE NOTICE '  2. No BOOTSTRAP_% action_type bypass (uses v_bootstrap instead)';
+  RAISE NOTICE '  1. No SYSTEM_%% semantic bypass in expected refs logic';
+  RAISE NOTICE '  2. No BOOTSTRAP_%% action_type bypass (uses v_bootstrap instead)';
   RAISE NOTICE '  3. v_bootstrap computed from database state (NOT FOUND)';
   RAISE NOTICE '  4. TOCTOU check has NO bypasses (including dry_run)';
   RAISE NOTICE '  5. dry_run does NOT bypass expected refs enforcement';
