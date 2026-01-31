@@ -170,8 +170,8 @@ BEGIN
     'NORMAL'
   );
 
-  IF v_res->>'status' != 'FAIL' OR v_res->>'reason' != 'APPROVAL_EXPIRED' THEN
-    RAISE EXCEPTION 'PROOF 4 FAIL: expected FAIL/APPROVAL_EXPIRED, got res=%', v_res;
+  IF v_res->>'status' != 'FAIL' OR v_res->>'reason' != 'EXPIRED_APPROVAL' THEN
+    RAISE EXCEPTION 'PROOF 4 FAIL: expected FAIL/EXPIRED_APPROVAL, got res=%', v_res;
   END IF;
 
   -----------------------------------------------------------------------------
@@ -195,8 +195,8 @@ BEGIN
     'NORMAL'
   );
 
-  IF v_res->>'status' != 'FAIL' OR v_res->>'reason' != 'APPROVAL_EXPIRY_REQUIRED' THEN
-    RAISE EXCEPTION 'PROOF 5 FAIL: expected FAIL/APPROVAL_EXPIRY_REQUIRED, got res=%', v_res;
+  IF v_res->>'status' != 'FAIL' OR v_res->>'reason' != 'MISSING_APPROVAL_EXPIRY' THEN
+    RAISE EXCEPTION 'PROOF 5 FAIL: expected FAIL/MISSING_APPROVAL_EXPIRY, got res=%', v_res;
   END IF;
 
   -----------------------------------------------------------------------------
