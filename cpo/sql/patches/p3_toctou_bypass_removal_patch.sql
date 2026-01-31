@@ -65,6 +65,9 @@ DECLARE
   v_state_content jsonb;
   v_activation_content jsonb;
 
+  -- P6: change control kernel result
+  v_change_control_result jsonb;
+
   v_content jsonb;
 BEGIN
   -- ============================================================
@@ -266,6 +269,42 @@ BEGIN
             DETAIL = 'evaluate_gates threw an unhandled exception. Commit aborted (fail-closed, I4).',
             HINT = 'original_sqlstate=' || SQLSTATE;
   END;
+  -- ============================================================
+
+  -- ============================================================
+  -- P6 CHANGE CONTROL KERNEL (mandatory, non-exceptionable)
+  -- Runs when artifacts propose charter mutations (charters or charter_activations).
+  -- Uses 6-arg wrapper which derives is_genesis and capability from DB state.
+  -- Fail-closed: kernel FAIL overrides gate outcome. Kernel errors propagate.
+  -- Bootstrap is exempt (proposes_charter_change returns true, but kernel
+  -- grants GENESIS_BOOTSTRAP_EXEMPT via is_genesis + KERNEL_BOOTSTRAP capability).
+  -- ============================================================
+  IF NOT v_bootstrap AND v_outcome IN ('PASS','PASS_WITH_EXCEPTION') THEN
+    IF cpo.proposes_charter_change(p_artifacts) THEN
+      BEGIN
+        v_change_control_result := cpo.evaluate_change_control_kernel(
+          p_agent_id,
+          v_action_type,
+          p_artifacts,
+          v_now,
+          v_cur_charter_version_id,
+          COALESCE((v_charter_content->>'required_approvals')::integer, 1)
+        );
+
+        IF COALESCE(v_change_control_result->>'status', 'FAIL') <> 'PASS' THEN
+          v_outcome := 'FAIL';
+          v_gate_results := v_gate_results || jsonb_build_array(v_change_control_result);
+        ELSE
+          v_gate_results := v_gate_results || jsonb_build_array(v_change_control_result);
+        END IF;
+      EXCEPTION WHEN OTHERS THEN
+        RAISE EXCEPTION 'KERNEL_CHANGE_CONTROL_FAILED: %', SQLERRM
+          USING ERRCODE = 'CPO98',
+                DETAIL = 'evaluate_change_control_kernel threw an unhandled exception. Commit aborted (fail-closed, I4).',
+                HINT = 'original_sqlstate=' || SQLSTATE;
+      END;
+    END IF;
+  END IF;
   -- ============================================================
 
   v_applied := (NOT v_dry_run) AND (v_outcome IN ('PASS','PASS_WITH_EXCEPTION'));

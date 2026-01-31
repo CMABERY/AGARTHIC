@@ -121,7 +121,7 @@ BEGIN
   ELSE
     -- Wiring pending: kernel exists and proofs pass, but commit_action integration
     -- not yet implemented. Downgraded from EXCEPTION to NOTICE for Phase 1.
-    RAISE NOTICE 'WARN: no wiring detected from commit_action to change control (direct or via prelude). Kernel exists independently — wiring is a Phase 2 integration task.';
+    RAISE EXCEPTION 'P6 CI GUARD FAIL: no wiring detected from commit_action to change control (direct or via prelude). Kernel must be wired into the write aperture.';
   END IF;
 
   RAISE NOTICE 'P6 CI GUARD PASS: change-control wiring + semantic constraints verified.';
