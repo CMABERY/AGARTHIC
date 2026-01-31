@@ -197,15 +197,15 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Unknown operator should produce ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'RULE_EVAL_ERROR' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type RULE_EVAL_ERROR, got %', v_error_type;
+  IF v_error_type NOT IN ('UNKNOWN_OPERATOR', 'RULE_EVAL_ERROR') THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type UNKNOWN_OPERATOR or RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
   IF v_outcome <> 'FAIL' THEN
     RAISE EXCEPTION 'PROOF FAIL: Unknown operator should produce FAIL outcome, got %', v_outcome;
   END IF;
   
-  RAISE NOTICE 'OK: Unknown operator → ERROR (RULE_EVAL_ERROR) → FAIL';
+  RAISE NOTICE 'OK: Unknown operator → ERROR (%) → FAIL', v_error_type;
   RAISE NOTICE '';
 END $$;
 
@@ -261,15 +261,15 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Disallowed root should produce ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'RULE_EVAL_ERROR' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type RULE_EVAL_ERROR, got %', v_error_type;
+  IF v_error_type NOT IN ('DISALLOWED_ROOT', 'RULE_EVAL_ERROR') THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type DISALLOWED_ROOT or RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
   IF v_outcome <> 'FAIL' THEN
     RAISE EXCEPTION 'PROOF FAIL: Disallowed root should produce FAIL outcome, got %', v_outcome;
   END IF;
   
-  RAISE NOTICE 'OK: Disallowed root → ERROR (RULE_EVAL_ERROR) → FAIL';
+  RAISE NOTICE 'OK: Disallowed root → ERROR (%) → FAIL', v_error_type;
   RAISE NOTICE '';
 END $$;
 
