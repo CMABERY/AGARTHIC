@@ -120,8 +120,8 @@ REVOKE ALL ON FUNCTION cpo.is_exception_valid(text, uuid, text, timestamptz) FRO
 -- Returns a jsonb envelope describing the chosen valid exception, or NULL.
 --
 -- Determinism (INV-405):
---   * collapse ledger rows to "latest event per exception_id" (by id DESC)
---   * scan candidates newest-first (by latest row id DESC)
+--   * collapse ledger rows to "latest event per exception_id" (by created_at DESC)
+--   * scan candidates newest-first (by latest row created_at DESC)
 --   * pick the first valid match
 --   * if multiple valid matches exist for the same policy_check_id + action_type,
 --     FAIL-CLOSED (raise) to prevent ambiguous authority.
@@ -142,24 +142,24 @@ DECLARE
   v_exc jsonb;
   v_expiry timestamptz;
   v_match jsonb;
-  v_match_row_id bigint;
+  v_match_row_ts timestamptz;
   v_match_count int := 0;
 BEGIN
   -- Latest state per exception_id, filtered to this agent + policy_check_id.
   FOR v_row IN
     WITH latest AS (
       SELECT DISTINCT ON (e.content->>'exception_id')
-             e.id AS row_id,
+             e.created_at AS row_ts,
              e.content AS content
         FROM cpo.cpo_exceptions e
        WHERE e.agent_id = p_agent_id
          AND e.content->>'policy_check_id' = p_policy_check_id
          AND e.content ? 'exception_id'
-       ORDER BY e.content->>'exception_id', e.id DESC
+       ORDER BY e.content->>'exception_id', e.created_at DESC
     )
-    SELECT row_id, content
+    SELECT row_ts, content
       FROM latest
-     ORDER BY row_id DESC
+     ORDER BY row_ts DESC
   LOOP
     v_exc := v_row.content;
 
@@ -194,7 +194,7 @@ BEGIN
     v_match_count := v_match_count + 1;
 
     IF v_match_count = 1 THEN
-      v_match_row_id := v_row.row_id;
+      v_match_row_ts := v_row.row_ts;
       v_match := jsonb_build_object(
         'exception_id', (v_exc->>'exception_id')::uuid,
         'policy_check_id', p_policy_check_id,
@@ -204,8 +204,8 @@ BEGIN
     ELSE
       -- Multiple valid matches => ambiguous authority.
       RAISE EXCEPTION
-        'AMBIGUOUS_EXCEPTION_MATCH: multiple valid exceptions for agent_id=% policy_check_id=% action_type=% (first_row_id=% additional_row_id=%)',
-        p_agent_id, p_policy_check_id, p_action_type, v_match_row_id, v_row.row_id
+        'AMBIGUOUS_EXCEPTION_MATCH: multiple valid exceptions for agent_id=% policy_check_id=% action_type=% (first_row_ts=% additional_row_ts=%)',
+        p_agent_id, p_policy_check_id, p_action_type, v_match_row_ts, v_row.row_ts
         USING ERRCODE = 'P0001';
     END IF;
   END LOOP;
