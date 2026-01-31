@@ -81,6 +81,11 @@ BEGIN
     RAISE EXCEPTION 'action_log_content must be a JSON object' USING ERRCODE='22023';
   END IF;
 
+  -- CONTRACT ENFORCEMENT (I4, Phase 2): Validate artifact shape before processing.
+  -- Rejects unknown keys, validates array types, checks required fields.
+  -- Must run BEFORE any artifact reads to ensure fail-closed semantics.
+  PERFORM cpo.validate_artifacts(p_artifacts);
+
   -- Serialize commits per agent (covers genesis before heads row exists)
   PERFORM pg_advisory_xact_lock(hashtext('cpo:commit:' || p_agent_id));
 
