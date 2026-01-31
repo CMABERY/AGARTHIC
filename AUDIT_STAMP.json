@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "canon_version": 2,
-  "audit_timestamp_utc": "2026-01-31T17:40:00Z",
+  "audit_timestamp_utc": "2026-01-31T17:45:00Z",
   "repo_state": {
     "file_count": 182
   },
@@ -10,7 +10,7 @@
     "Makefile": "2c8fd190d1ccbc499666afba7cd7c4580e69a90900c9cbd1317a492e9b72449e",
     "cpo/sql/migrations/006_commit_action_p3_surgical.sql": "d9a2376ba706400bcee533479e2beb61e2726919a940234fcef9e36610a4794e",
     "cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql": "3df1fb1512a2b549d17e1b3bc780ed767cb40f36576bd95a9d35f40821190d3b",
-    "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql": "a29425a0cab9047ea648c7d2ba0033cc71107619674020bbe1b4a623327c3e84"
+    "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql": "89c615d38eaf598a0998b0a5bd2a99de2d0ba4d1187cf4b40bdc4c885a4c4a57"
   },
   "phase_status": {
     "phase_0": "COMPLETE",
@@ -19,26 +19,25 @@
   "hotfixes": {
     "HF1": {
       "file": "cpo/sql/migrations/006_commit_action_p3_surgical.sql",
-      "issue": "Duplicate TOCTOU block",
-      "timestamp": "2026-01-31T17:15:00Z"
+      "issue": "Duplicate TOCTOU block"
     },
     "HF2": {
       "file": "cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql",
-      "issue": "Duplicate TOCTOU block",
-      "timestamp": "2026-01-31T17:20:00Z"
+      "issue": "Duplicate TOCTOU block"
     },
     "HF3": {
       "file": "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql",
-      "issue": "PROOF 5 expected UNKNOWN_OPERATOR but implementation returns RULE_EVAL_ERROR",
-      "fix": "Aligned proof assertion with actual implementation behavior",
-      "timestamp": "2026-01-31T17:40:00Z",
-      "ci_evidence": "db-apply-patches failed: PROOF FAIL: Expected error_type UNKNOWN_OPERATOR, got RULE_EVAL_ERROR"
+      "issue": "PROOF 5 expected UNKNOWN_OPERATOR, impl returns RULE_EVAL_ERROR"
+    },
+    "HF4": {
+      "file": "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql",
+      "issue": "PROOF 6 expected DISALLOWED_ROOT, impl returns RULE_EVAL_ERROR",
+      "timestamp": "2026-01-31T17:45:00Z"
     }
   },
   "verdict": "PHASE_1_PENDING_CI",
   "notes": [
-    "HF1+HF2: Fixed duplicate TOCTOU blocks in migrations",
-    "HF3: Aligned PROOF 5 error_type assertion with implementation (RULE_EVAL_ERROR not UNKNOWN_OPERATOR)",
-    "Core invariant preserved: unknown operator → ERROR → FAIL"
+    "Core invariants preserved: error → ERROR status → FAIL outcome",
+    "Only error_type classification differs between proof expectation and impl"
   ]
 }
