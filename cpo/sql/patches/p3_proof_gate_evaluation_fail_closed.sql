@@ -36,12 +36,16 @@ BEGIN
     'cpo.commit_action(text, jsonb, jsonb, uuid, uuid)'::regprocedure
   );
 
+  -- Must NOT contain the old soft-downgrade error type
   IF v_fn_body LIKE '%GATE_EVALUATION_ERROR%' THEN
     RAISE EXCEPTION 'PROOF 1 FAIL: commit_action still contains GATE_EVALUATION_ERROR soft downgrade';
   END IF;
 
-  IF v_fn_body LIKE '%EXCEPTION WHEN OTHERS THEN%v_outcome := ''FAIL''%' THEN
-    RAISE EXCEPTION 'PROOF 1 FAIL: commit_action contains exception-swallowing pattern (v_outcome := FAIL in EXCEPTION handler)';
+  -- The old swallowing pattern was: EXCEPTION WHEN OTHERS THEN followed by
+  -- v_gate_results := '[]'::jsonb (wiping gate results on error).
+  -- This is distinct from the P6 change control handler which re-raises.
+  IF v_fn_body LIKE '%EXCEPTION WHEN OTHERS THEN%v_gate_results := ''[]''%' THEN
+    RAISE EXCEPTION 'PROOF 1 FAIL: commit_action contains exception-swallowing pattern (gate_results wiped in EXCEPTION handler)';
   END IF;
 
   RAISE NOTICE 'PROOF 1 PASS: No exception-swallowing pattern in commit_action';
