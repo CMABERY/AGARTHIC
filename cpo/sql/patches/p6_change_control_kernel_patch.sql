@@ -57,6 +57,16 @@ $$;
 
 REVOKE ALL ON FUNCTION cpo.proposes_charter_change(jsonb) FROM PUBLIC;
 
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo.proposes_charter_change(jsonb) OWNER TO cpo_owner;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
+    GRANT EXECUTE ON FUNCTION cpo.proposes_charter_change(jsonb) TO cpo_commit;
+  END IF;
+END $$;
+
 -------------------------------------------------------------------------------
 -- Replay protection: physical uniqueness (preferred)
 --
@@ -487,6 +497,16 @@ $$;
 
 REVOKE ALL ON FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer,boolean,text) FROM PUBLIC;
 
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer,boolean,text) OWNER TO cpo_owner;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
+    GRANT EXECUTE ON FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer,boolean,text) TO cpo_commit;
+  END IF;
+END $$;
+
 -------------------------------------------------------------------------------
 -- Wrapper: legacy 6-arg signature (prevents overload residue side-channels)
 --
@@ -532,5 +552,15 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer) FROM PUBLIC;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer) OWNER TO cpo_owner;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
+    GRANT EXECUTE ON FUNCTION cpo.evaluate_change_control_kernel(text,text,jsonb,timestamptz,uuid,integer) TO cpo_commit;
+  END IF;
+END $$;
 
 COMMIT;
