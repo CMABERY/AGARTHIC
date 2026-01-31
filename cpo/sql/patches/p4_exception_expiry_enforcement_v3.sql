@@ -45,6 +45,13 @@ $$;
 
 REVOKE ALL ON FUNCTION cpo._exception_scope_allows_action_type(jsonb, text) FROM PUBLIC;
 
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo._exception_scope_allows_action_type(jsonb, text) OWNER TO cpo_owner;
+  END IF;
+END $$;
+
 
 -- cpo.is_exception_valid
 -- Returns TRUE iff the *latest* exception event for exception_id is ACTIVE,
@@ -114,6 +121,16 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION cpo.is_exception_valid(text, uuid, text, timestamptz) FROM PUBLIC;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo.is_exception_valid(text, uuid, text, timestamptz) OWNER TO cpo_owner;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
+    GRANT EXECUTE ON FUNCTION cpo.is_exception_valid(text, uuid, text, timestamptz) TO cpo_commit;
+  END IF;
+END $$;
 
 
 -- cpo.find_valid_exception
@@ -215,5 +232,15 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION cpo.find_valid_exception(text, text, text, timestamptz) FROM PUBLIC;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
+    ALTER FUNCTION cpo.find_valid_exception(text, text, text, timestamptz) OWNER TO cpo_owner;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
+    GRANT EXECUTE ON FUNCTION cpo.find_valid_exception(text, text, text, timestamptz) TO cpo_commit;
+  END IF;
+END $$;
 
 COMMIT;
