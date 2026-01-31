@@ -1,0 +1,544 @@
+# meta/lexicon.yaml
+# CPO Governance Kernel — Canonical Lexicon
+#
+# D5 Resolution: governance physics
+# Every term below is grounded in observable SQL artifacts at commit 8cee4d5.
+# Terms are organized by domain. Each entry includes:
+#   - term: canonical name
+#   - kind: table | function | role | constant | concept | invariant-group
+#   - definition: one-line meaning
+#   - source: file(s) where the term is defined or enforced
+#
+# Schema version allows future tooling to validate/render this file.
+schema_version: 1
+project: cpo-governance-kernel
+identity: governance-physics
+
+# ============================================================================
+# CORE CONCEPTS
+# ============================================================================
+concepts:
+  - term: write aperture
+    kind: concept
+    definition: >
+      The single entry point (commit_action) through which all state mutations
+      pass. No artifact reaches a table without traversing this function.
+    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+
+  - term: fail-closed
+    kind: concept
+    definition: >
+      Default-deny evaluation semantics. Unknown inputs, missing fields,
+      structural errors, and unrecognized keys all result in rejection.
+      The system never silently passes on ambiguity.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+  - term: governance physics
+    kind: concept
+    definition: >
+      Invariants enforced by database structure and function topology,
+      not by policy configuration. Physics cannot be overridden by
+      action_type strings or agent claims.
+    source: [cpo/STATUS.json]
+
+  - term: kernel gate
+    kind: concept
+    definition: >
+      A gate whose evaluation is mandatory and non-exceptionable.
+      Kernel gates are enforced by function topology (they run before
+      exception lookup) rather than by policy flags.
+    source: [cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql]
+
+  - term: contract version
+    kind: concept
+    definition: >
+      Integer version of the commit_action contract. Queryable via
+      commit_action_contract_version(). Current version is 2.
+    source: [cpo/sql/patches/p2_contract_declaration.sql]
+
+  - term: operational mantra
+    kind: concept
+    definition: >
+      Eight principles that define the system's behavioral identity.
+      Encoded in STATUS.json and verified by cpo-lint CI job.
+    source: [cpo/STATUS.json]
+
+# ============================================================================
+# TABLES (15)
+# ============================================================================
+tables:
+  - term: cpo_action_logs
+    kind: table
+    definition: Append-only spine of all commit attempts (pass or fail).
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_agent_heads
+    kind: table
+    definition: Materialized current state pointer per agent (latest seq, charter, snapshot).
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_charters
+    kind: table
+    definition: Charter versions containing gate definitions and governance rules.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_charter_activations
+    kind: table
+    definition: Records of charter version activations binding a charter to an agent.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_state_snapshots
+    kind: table
+    definition: Point-in-time state captures for an agent.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_decisions
+    kind: table
+    definition: Recorded decision artifacts from commit actions.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_assumptions
+    kind: table
+    definition: Declared assumptions that may be referenced by gates.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_assumption_events
+    kind: table
+    definition: Events affecting assumption lifecycle (creation, invalidation).
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_exceptions
+    kind: table
+    definition: Time-bounded authority grants that allow specific gate failures to pass.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_exception_events
+    kind: table
+    definition: Events affecting exception lifecycle.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_changes
+    kind: table
+    definition: Change control packages for charter mutations.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+  - term: cpo_drift_events
+    kind: table
+    definition: Detected drift signals emitted by the drift detection engine.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: cpo_drift_resolutions
+    kind: table
+    definition: Recorded resolutions of previously detected drift events.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_artifact_table_registry
+    kind: table
+    definition: Registry mapping artifact type names to target tables (P2 durability).
+    source: [cpo/sql/patches/p2_artifact_table_registry_v3.sql]
+
+  - term: cpo_contract_artifact_schema
+    kind: table
+    definition: >
+      Schema-driven contract enforcement registry. Maps artifact keys to
+      target tables, required fields, and ID extraction fields.
+      The single source of truth for validate_artifacts().
+    source: [cpo/sql/patches/p2_contract_declaration.sql]
+
+# ============================================================================
+# FUNCTIONS — WRITE APERTURE
+# ============================================================================
+functions_write_aperture:
+  - term: commit_action
+    kind: function
+    definition: >
+      Canonical write aperture. All state mutations pass through this function.
+      Signature: (text, jsonb, jsonb, uuid, uuid) RETURNS jsonb.
+    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+
+  - term: validate_artifacts
+    kind: function
+    definition: >
+      Schema-driven artifact validator. Rejects unknown keys, non-array values,
+      and missing required fields. Runs before any artifact processing in commit_action.
+    source: [cpo/sql/patches/p2_contract_enforcement.sql]
+
+  - term: commit_action_contract_version
+    kind: function
+    definition: Returns the current contract version integer (currently 2).
+    source: [cpo/sql/patches/p2_contract_declaration.sql]
+
+# ============================================================================
+# FUNCTIONS — GATE ENGINE
+# ============================================================================
+functions_gate_engine:
+  - term: evaluate_gates
+    kind: function
+    definition: >
+      Evaluates all charter-defined gates against resolved inputs.
+      Returns jsonb with outcome and gate_results array.
+      Per-gate errors are classified (ERROR status), not swallowed.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+  - term: eval_rule
+    kind: function
+    definition: Evaluates a single policy rule (operator + args) against resolved values.
+    source: [cpo/sql/migrations/007_policy_dsl.sql]
+
+  - term: jsonptr_get
+    kind: function
+    definition: JSON pointer resolution — extracts a value from a jsonb document by path.
+    source: [cpo/sql/migrations/007_policy_dsl.sql]
+
+  - term: jsonptr_get_required
+    kind: function
+    definition: JSON pointer resolution that fails closed if the path is missing.
+    source: [cpo/sql/migrations/007_policy_dsl.sql]
+
+  - term: _resolve_arg
+    kind: function
+    definition: Internal argument resolver for gate evaluation (literal vs pointer).
+    source: [cpo/sql/migrations/007_policy_dsl.sql]
+
+# ============================================================================
+# FUNCTIONS — CHANGE CONTROL (P6)
+# ============================================================================
+functions_change_control:
+  - term: evaluate_change_control_kernel
+    kind: function
+    definition: >
+      Mandatory kernel gate for charter mutations. Two overloads:
+      8-arg core (explicit is_genesis + capability) and 6-arg wrapper
+      (derives context from DB state). Non-exceptionable.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+  - term: proposes_charter_change
+    kind: function
+    definition: >
+      Predicate: returns true if artifacts contain non-empty charters
+      or charter_activations arrays. Used to trigger change control evaluation.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+# ============================================================================
+# FUNCTIONS — EXCEPTION ENGINE (P4)
+# ============================================================================
+functions_exception_engine:
+  - term: find_valid_exception
+    kind: function
+    definition: >
+      Locates a non-expired, status=ACTIVE exception for a given agent,
+      policy_check_id, and action_type. Enforces knife-edge expiry semantics.
+    source: [cpo/sql/patches/p4_exception_expiry_enforcement_v3.sql]
+
+  - term: is_exception_valid
+    kind: function
+    definition: Checks whether a specific exception is still valid (not expired, still ACTIVE).
+    source: [cpo/sql/patches/p4_exception_expiry_enforcement_v3.sql]
+
+  - term: _exception_scope_allows_action_type
+    kind: function
+    definition: Checks whether an exception's scope permits a given action_type.
+    source: [cpo/sql/patches/p4_exception_expiry_enforcement_v3.sql]
+
+# ============================================================================
+# FUNCTIONS — DRIFT DETECTION (P5)
+# ============================================================================
+functions_drift:
+  - term: emit_drift_events
+    kind: function
+    definition: >
+      Orchestrator for all four drift detection signals. Runs all detectors
+      and inserts deduplicated drift events into cpo_drift_events.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: detect_repeated_exceptions
+    kind: function
+    definition: Detects gates that rely on exceptions repeatedly (signal REPEATED_EXCEPTIONS).
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: detect_mode_thrash
+    kind: function
+    definition: Detects rapid outcome oscillation between PASS and FAIL (signal MODE_THRASH).
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: detect_state_staleness
+    kind: function
+    definition: Detects agents with no recent activity (signal STATE_STALENESS).
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: detect_expired_assumption_references
+    kind: function
+    definition: Detects references to expired assumptions (signal EXPIRED_ASSUMPTION_REFERENCE).
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: detect_drift
+    kind: function
+    definition: Convenience wrapper that calls emit_drift_events for a given agent.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+# ============================================================================
+# FUNCTIONS — BOOTSTRAP & VERIFICATION
+# ============================================================================
+functions_bootstrap:
+  - term: bootstrap_verify
+    kind: function
+    definition: Post-migration verification — checks tables, roles, and schema integrity.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: rebuild_agent_heads
+    kind: function
+    definition: Reconstructs cpo_agent_heads from the action_log spine.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: rehydrate_agent
+    kind: function
+    definition: Reconstructs full agent state from the append-only log.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: verify_heads_equivalence
+    kind: function
+    definition: Verifies materialized heads match reconstructed state.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: verify_reconstruction
+    kind: function
+    definition: Verifies agent state can be fully reconstructed from the log.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+# ============================================================================
+# FUNCTIONS — DURABILITY & EVIDENCE
+# ============================================================================
+functions_durability:
+  - term: durability_round_trip_test
+    kind: function
+    definition: Proves INSERT/SELECT round-trip for a given artifact table.
+    source: [cpo/sql/patches/p2_durability_drill_wiring.sql]
+
+  - term: durability_build_pack_for_table
+    kind: function
+    definition: Builds a test data pack for durability verification of a table.
+    source: [cpo/sql/patches/p2_durability_drill_wiring.sql]
+
+  - term: durability_insert_rows_for_table
+    kind: function
+    definition: Inserts test rows for durability verification.
+    source: [cpo/sql/patches/p2_durability_drill_wiring.sql]
+
+  - term: export_evidence_pack
+    kind: function
+    definition: Exports a complete evidence pack for audit purposes.
+    source: [cpo/sql/patches/p2_durability_drill_wiring.sql]
+
+  - term: get_all_write_aperture_targets
+    kind: function
+    definition: Returns all tables reachable through the write aperture.
+    source: [cpo/sql/patches/p2_durability_drill_wiring.sql]
+
+  - term: get_canonical_artifact_types
+    kind: function
+    definition: Returns the list of canonical artifact type names.
+    source: [cpo/sql/patches/p2_artifact_table_registry_v3.sql]
+
+# ============================================================================
+# ROLES (6 operational)
+# ============================================================================
+roles:
+  - term: cpo_owner
+    kind: role
+    definition: Owns all cpo schema objects. SECURITY DEFINER functions run as this role.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_commit
+    kind: role
+    definition: >
+      Authorized to call commit_action and related write-path functions.
+      The minimum-privilege role for state mutations.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_read
+    kind: role
+    definition: Read-only access to cpo schema tables.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_bootstrap
+    kind: role
+    definition: >
+      Role that grants KERNEL_BOOTSTRAP capability. Members can perform
+      genesis commits (first commit for an agent) with change control exemption.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+  - term: cpo_migration
+    kind: role
+    definition: Role for applying migrations and patches. Granted to the CI user.
+    source: [cpo/sql/migrations/000_bootstrap.sql]
+
+# ============================================================================
+# ERROR CODES
+# ============================================================================
+error_codes:
+  - term: "22023"
+    kind: constant
+    definition: >
+      CONTRACT_VIOLATION — raised by validate_artifacts for unknown keys,
+      non-array values, or missing required fields.
+    source: [cpo/sql/patches/p2_contract_enforcement.sql]
+
+  - term: CPO01
+    kind: constant
+    definition: >
+      TOCTOU guard — raised when expected_charter_activation_id or
+      expected_state_snapshot_id does not match current head state.
+    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+
+  - term: CPO98
+    kind: constant
+    definition: >
+      KERNEL_CHANGE_CONTROL_FAILED — raised when evaluate_change_control_kernel
+      throws an unhandled exception. Transaction aborted (fail-closed).
+    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+
+  - term: CPO99
+    kind: constant
+    definition: >
+      KERNEL_GATE_EVALUATION_FAILED — raised when evaluate_gates throws
+      an unhandled exception. Transaction aborted (fail-closed).
+    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+
+# ============================================================================
+# GATE OUTCOME VALUES
+# ============================================================================
+gate_outcomes:
+  - term: PASS
+    kind: constant
+    definition: All gates evaluated successfully; commit proceeds.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+  - term: FAIL
+    kind: constant
+    definition: >
+      One or more gates did not pass. Default outcome (fail-closed).
+      Commit is recorded but artifacts are not persisted.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+  - term: PASS_WITH_EXCEPTION
+    kind: constant
+    definition: >
+      A gate failed but a valid, non-expired exception covers it.
+      Commit proceeds. The exception_id is recorded in gate_results.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+  - term: ERROR
+    kind: constant
+    definition: >
+      A gate could not be evaluated due to structural problems
+      (missing field, unknown operator, bad root type). The gate is
+      treated as FAIL and is ineligible for exception coverage.
+    source: [cpo/sql/patches/p3_gate_engine_missing_field_patch.sql]
+
+# ============================================================================
+# CANONICAL OUTPUT KEYS (locked by D4 proof)
+# ============================================================================
+output_keys:
+  - term: policy_check_id
+    kind: constant
+    definition: >
+      Per-gate identifier in gate result objects. Canonical name locked
+      by p3_proof_gate_output_keys_canonical.sql. Disallowed alternatives:
+      gate_id (as output key).
+    source: [cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql]
+
+  - term: gate_results
+    kind: constant
+    definition: >
+      Array of gate evaluation results in commit_action output.
+      Canonical name locked by D4 proof. Disallowed alternatives:
+      kernel_gates, kernel_gate_results.
+    source: [cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql]
+
+# ============================================================================
+# CHANGE CONTROL CONSTANTS
+# ============================================================================
+change_control:
+  - term: GENESIS_BOOTSTRAP_EXEMPT
+    kind: constant
+    definition: >
+      Change control exemption reason. Granted only when BOTH is_genesis=true
+      AND capability=KERNEL_BOOTSTRAP. Not derivable from action_type strings.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+  - term: KERNEL_BOOTSTRAP
+    kind: constant
+    definition: >
+      Capability value derived from cpo_bootstrap role membership.
+      Required (with is_genesis) for genesis exemption from change control.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+  - term: GATE-CHANGE-CONTROL
+    kind: constant
+    definition: >
+      The policy_check_id used by the change control kernel in all
+      gate result objects it produces.
+    source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
+
+# ============================================================================
+# DRIFT SIGNALS
+# ============================================================================
+drift_signals:
+  - term: REPEATED_EXCEPTIONS
+    kind: constant
+    definition: A gate has been covered by exceptions multiple times recently.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: MODE_THRASH
+    kind: constant
+    definition: An agent's commit outcomes are oscillating rapidly between PASS and FAIL.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: STATE_STALENESS
+    kind: constant
+    definition: An agent has had no recent commit activity.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+  - term: EXPIRED_ASSUMPTION_REFERENCE
+    kind: constant
+    definition: A commit references an assumption that has since expired or been invalidated.
+    source: [cpo/sql/patches/011_drift_detection.sql]
+
+# ============================================================================
+# INVARIANT GROUPS
+# ============================================================================
+invariant_groups:
+  - term: INV-1xx
+    kind: invariant-group
+    definition: "P1 — Contracts / Policy Check Registry (INV-101 through INV-105)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-2xx
+    kind: invariant-group
+    definition: "P2 — Persistence / Write Aperture (INV-201 through INV-203)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-3xx
+    kind: invariant-group
+    definition: "P3 — Gate Integration / TOCTOU (INV-301 through INV-305)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-4xx
+    kind: invariant-group
+    definition: "P4 — Exception Expiry / Authority (INV-401 through INV-406)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-5xx
+    kind: invariant-group
+    definition: "P5 — Drift Detection (INV-501 through INV-505)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-6xx
+    kind: invariant-group
+    definition: "P6 — Change Control (INV-601 through INV-606)"
+    source: [cpo/STATUS.json]
+
+  - term: INV-7xx
+    kind: invariant-group
+    definition: "P7 — Release Closure Pipeline (INV-701)"
+    source: [cpo/STATUS.json]
