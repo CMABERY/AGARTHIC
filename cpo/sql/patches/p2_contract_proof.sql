@@ -42,7 +42,7 @@ BEGIN
   -- PROOF 2: Schema covers all artifact INSERT targets in commit_action
   ---------------------------------------------------------------------------
   -- Extract keys that commit_action INSERTs into from function body
-  SELECT pg_get_functiondef(oid) INTO v_commit_def
+  SELECT pg_get_functiondef(p.oid) INTO v_commit_def
     FROM pg_proc p
     JOIN pg_namespace n ON n.oid = p.pronamespace
    WHERE n.nspname = 'cpo' AND p.proname = 'commit_action'
