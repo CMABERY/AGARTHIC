@@ -76,7 +76,7 @@ BEGIN
   IF v_coredef !~ 'v_expiry\s*<=\s*p_now' THEN
     RAISE EXCEPTION 'P6 CI GUARD FAIL: core missing knife-edge expiry check (expiry_at <= now is expired)';
   END IF;
-  IF v_coredef !~ 'APPROVAL_EXPIRY_REQUIRED' THEN
+  IF v_coredef !~ 'MISSING_APPROVAL_EXPIRY' THEN
     RAISE EXCEPTION 'P6 CI GUARD FAIL: core missing fail-closed expiry-at-required behavior';
   END IF;
 
