@@ -222,9 +222,10 @@ BEGIN
 
   v_res := cpo.evaluate_gates(
     v_agent_id,
-    v_charter,
     v_action_log_content,
-    '{}'::jsonb,
+    v_charter,
+    '{}'::jsonb,             -- state
+    '{}'::jsonb,             -- activation
     v_now
   );
 
@@ -300,9 +301,10 @@ BEGIN
 
   v_res := cpo.evaluate_gates(
     v_agent_id,
-    v_charter,
     v_action_log_content,
-    '{}'::jsonb,
+    v_charter,
+    '{}'::jsonb,             -- state
+    '{}'::jsonb,             -- activation
     v_now
   );
 
