@@ -61,7 +61,9 @@ PATCHES := \
 	cpo/sql/patches/011_drift_detection_selftest.sql \
 	cpo/sql/patches/p2_contract_proof.sql \
 	cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql \
-	cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql
+	cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql \
+	cpo/sql/patches/p6_envelope_persistence.sql \
+	cpo/sql/patches/p6_proof_envelope_hash_coherence.sql
 
 ALL_SQL := $(MIGRATIONS) $(PATCHES)
 
