@@ -230,7 +230,7 @@ BEGIN
   );
 
   IF v_res->>'outcome' != 'PASS_WITH_EXCEPTION' THEN
-    RAISE EXCEPTION 'PROOF 3 FAIL: expected PASS_WITH_EXCEPTION, got %. gate_results=%', v_res->>'outcome', v_res->'gate_results';
+    RAISE EXCEPTION 'PROOF 3 FAIL: expected PASS_WITH_EXCEPTION, got %', v_res->>'outcome';
   END IF;
 
   -- locate the gate result

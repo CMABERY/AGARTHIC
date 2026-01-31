@@ -31,6 +31,7 @@ PSQL := PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER)
 MIGRATIONS := \
 	cpo/sql/migrations/000_bootstrap.sql \
 	cpo/sql/migrations/006_commit_action_p3_surgical.sql \
+	cpo/sql/migrations/007_policy_dsl.sql \
 	cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql
 
 PATCHES := \

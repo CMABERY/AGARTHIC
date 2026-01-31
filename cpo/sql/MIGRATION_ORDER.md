@@ -20,7 +20,8 @@ Applying migrations out of order will result in failures due to missing dependen
 |-------|------|---------|--------------|
 | 1 | `000_bootstrap.sql` | Schema, roles, extensions, base tables | None (fresh DB) |
 | 2 | `006_commit_action_p3_surgical.sql` | Core commit_action function (P3) | Bootstrap tables |
-| 3 | `009_commit_action_gate_integration_p3_surgical.sql` | Gate integration wiring | commit_action v1 |
+| 3 | `007_policy_dsl.sql` | Policy DSL: eval_rule, jsonptr_get | commit_action v1 |
+| 4 | `009_commit_action_gate_integration_p3_surgical.sql` | Gate integration wiring | Policy DSL |
 
 ## Patch Application Order
 

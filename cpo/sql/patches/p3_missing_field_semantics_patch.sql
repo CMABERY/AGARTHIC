@@ -75,6 +75,11 @@ BEGIN
     RETURN NULL;
   END IF;
 
+  -- Object with 'pointer' key → resolve with required semantics
+  IF jsonb_typeof(p_arg) = 'object' AND p_arg ? 'pointer' THEN
+    RETURN cpo.jsonptr_get_required(p_ctx, p_arg->>'pointer');
+  END IF;
+
   IF jsonb_typeof(p_arg) = 'string' THEN
     v_txt := p_arg::text;
     -- jsonb string renders with quotes; strip them
