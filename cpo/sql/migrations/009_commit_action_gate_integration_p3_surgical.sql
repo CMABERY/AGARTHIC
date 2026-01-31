@@ -139,6 +139,7 @@ BEGIN
     END IF;
   END IF;
 
+  IF NOT v_bootstrap THEN
     -- Fetch current charter/state/activation content for gate evaluation
     SELECT content INTO v_charter_content
       FROM cpo.cpo_charters
@@ -174,6 +175,7 @@ BEGIN
       RAISE EXCEPTION 'RESOLVED_INPUT_MISSING: Charter activation content not found for activation_id=%', v_cur_charter_activation_id
         USING ERRCODE='P0001';
     END IF;
+  END IF; -- IF NOT v_bootstrap
 
   -- ============================================================
   -- P3 GATE ENGINE (replaces P2 stub)
