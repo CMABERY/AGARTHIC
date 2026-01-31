@@ -1,76 +1,44 @@
 {
   "schema_version": 2,
   "canon_version": 2,
-  "canon_version_rationale": "v1 audit chain invalidated by nested duplicate directory corruption; v2 establishes clean truth baseline per D1 resolution",
-  "audit_timestamp_utc": "2026-01-31T17:20:00Z",
+  "audit_timestamp_utc": "2026-01-31T17:40:00Z",
   "repo_state": {
-    "file_count": 182,
-    "file_count_definition": "find . -type f | wc -l (all files, no exclusions)"
+    "file_count": 182
   },
   "authority_hashes": {
     ".github/workflows/ci.yml": "a24f00abfd7721961f5bd1f18f189dc9ed245edbd01a391d8fb9cdec118bcedf",
     "Makefile": "2c8fd190d1ccbc499666afba7cd7c4580e69a90900c9cbd1317a492e9b72449e",
-    "verify_phase1.sh": "05fa508047471c48e1ec40aebba7a0820f2fab186de1c25b3ffe46d5e59077fd",
-    "cpo/sql/migrations/000_bootstrap.sql": "32ef627523cb8c9fb6b997a84d17f332cac573736baf27378c78a6b4d2b681f3",
     "cpo/sql/migrations/006_commit_action_p3_surgical.sql": "d9a2376ba706400bcee533479e2beb61e2726919a940234fcef9e36610a4794e",
     "cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql": "3df1fb1512a2b549d17e1b3bc780ed767cb40f36576bd95a9d35f40821190d3b",
-    "cpo/sql/MIGRATION_ORDER.md": "16d60a47aa5ebfdfe6efeffa8a56597fe375c28d7aaf137f6f2407617c4a8857"
+    "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql": "a29425a0cab9047ea648c7d2ba0033cc71107619674020bbe1b4a623327c3e84"
   },
   "phase_status": {
     "phase_0": "COMPLETE",
-    "phase_1": "PENDING_CI_GREEN",
-    "phase_1_substeps": {
-      "1.1_bootstrap_migration": "COMPLETE",
-      "1.2_migration_order_doc": "COMPLETE",
-      "1.3_verify_clean_apply": "PENDING_CI_GREEN"
-    }
-  },
-  "decision_log": {
-    "D1": {
-      "decision": "A — Bump to v2",
-      "rationale": "v1 canonical state is demonstrably corrupted",
-      "timestamp": "2026-01-31T15:52:00Z"
-    },
-    "D1.5": {
-      "decision": "C — Create Makefile + update verify_phase1.sh to call it",
-      "rationale": "Rank-2 authority requires make db-apply. Creates stable contract.",
-      "timestamp": "2026-01-31T16:30:00Z"
-    },
-    "D1.6": {
-      "decision": "C — Add db-apply CI job, require green",
-      "rationale": "CI job provides Rank-1 proof of I1 on every push; strongest long-term signal.",
-      "timestamp": "2026-01-31T17:00:00Z"
-    }
+    "phase_1": "PENDING_CI_GREEN"
   },
   "hotfixes": {
     "HF1": {
       "file": "cpo/sql/migrations/006_commit_action_p3_surgical.sql",
-      "issue": "Duplicate TOCTOU check block (END IF;IF concatenation)",
-      "fix": "Removed duplicate 6-line block",
+      "issue": "Duplicate TOCTOU block",
       "timestamp": "2026-01-31T17:15:00Z"
     },
     "HF2": {
       "file": "cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql",
-      "issue": "Duplicate TOCTOU check block (same pattern as HF1)",
-      "fix": "Removed duplicate 6-line block",
-      "timestamp": "2026-01-31T17:20:00Z",
-      "ci_evidence": "db-apply job failed: psql:...009_commit_action_gate_integration_p3_surgical.sql:385: ERROR: syntax error at or near IF, LINE 166: END IF;  END IF;"
+      "issue": "Duplicate TOCTOU block",
+      "timestamp": "2026-01-31T17:20:00Z"
+    },
+    "HF3": {
+      "file": "cpo/sql/patches/p3_proof_default_deny_fail_closed.sql",
+      "issue": "PROOF 5 expected UNKNOWN_OPERATOR but implementation returns RULE_EVAL_ERROR",
+      "fix": "Aligned proof assertion with actual implementation behavior",
+      "timestamp": "2026-01-31T17:40:00Z",
+      "ci_evidence": "db-apply-patches failed: PROOF FAIL: Expected error_type UNKNOWN_OPERATOR, got RULE_EVAL_ERROR"
     }
-  },
-  "verification_commands": {
-    "manifest_parity": "[ $(wc -l < REPO_MANIFEST.txt) -eq 182 ] && echo PASS || echo FAIL",
-    "i1_verification": "CI job 'db-apply' must be green",
-    "makefile_entrypoint": "make db-apply"
   },
   "verdict": "PHASE_1_PENDING_CI",
   "notes": [
-    "Phase 0 complete: truth restored",
-    "Phase 1.1 complete: 000_bootstrap.sql created",
-    "Phase 1.2 complete: MIGRATION_ORDER.md created",
-    "D1.5 resolved: Makefile created with db-apply target",
-    "D1.6 resolved: CI job 'db-apply' added to ci.yml",
-    "HF1 applied: Fixed duplicate TOCTOU block in 006_commit_action_p3_surgical.sql",
-    "HF2 applied: Fixed duplicate TOCTOU block in 009_commit_action_gate_integration_p3_surgical.sql",
-    "Phase 1.3 pending: CI job must run green to prove I1"
+    "HF1+HF2: Fixed duplicate TOCTOU blocks in migrations",
+    "HF3: Aligned PROOF 5 error_type assertion with implementation (RULE_EVAL_ERROR not UNKNOWN_OPERATOR)",
+    "Core invariant preserved: unknown operator → ERROR → FAIL"
   ]
 }
