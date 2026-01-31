@@ -91,29 +91,29 @@ BEGIN
     END IF;
 
     -- starts_with(action_type, 'SYSTEM') / starts_with(..., 'BOOTSTRAP')
-    IF v_norm ~ 'starts_with\\s*\\(\\s*[^,]*action_type[^,]*,\\s*''system' THEN
+    IF v_norm ~ 'starts_with\s*\(\s*[^,]*action_type[^,]*,\s*''system' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (starts_with ... system) in %', v_sig;
     END IF;
 
-    IF v_norm ~ 'starts_with\\s*\\(\\s*[^,]*action_type[^,]*,\\s*''bootstrap' THEN
+    IF v_norm ~ 'starts_with\s*\(\s*[^,]*action_type[^,]*,\s*''bootstrap' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (starts_with ... bootstrap) in %', v_sig;
     END IF;
 
     -- left(action_type, N) = 'SYSTEM' / 'BOOTSTRAP'
-    IF v_norm ~ 'left\\s*\\(\\s*[^,]*action_type[^,]*,\\s*\\d+\\s*\\)\\s*=\\s*''system' THEN
+    IF v_norm ~ 'left\s*\(\s*[^,]*action_type[^,]*,\s*\d+\s*\)\s*=\s*''system' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (left ... = system) in %', v_sig;
     END IF;
 
-    IF v_norm ~ 'left\\s*\\(\\s*[^,]*action_type[^,]*,\\s*\\d+\\s*\\)\\s*=\\s*''bootstrap' THEN
+    IF v_norm ~ 'left\s*\(\s*[^,]*action_type[^,]*,\s*\d+\s*\)\s*=\s*''bootstrap' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (left ... = bootstrap) in %', v_sig;
     END IF;
 
     -- regex prefix checks: action_type ~ '^SYSTEM' / '^BOOTSTRAP'
-    IF v_norm ~ 'action_type\\s*~\\s*''\\^system' THEN
+    IF v_norm ~ 'action_type\s*~\s*''\^system' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (regex ^system) in %', v_sig;
     END IF;
 
-    IF v_norm ~ 'action_type\\s*~\\s*''\\^bootstrap' THEN
+    IF v_norm ~ 'action_type\s*~\s*''\^bootstrap' THEN
       RAISE EXCEPTION 'CI GUARD FAIL: semantic bypass detected (regex ^bootstrap) in %', v_sig;
     END IF;
 
