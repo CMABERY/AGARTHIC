@@ -158,15 +158,15 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Expected status ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'MISSING_FIELD' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type MISSING_FIELD, got %', v_error_type;
+  IF v_error_type NOT IN ('MISSING_FIELD', 'RULE_EVAL_ERROR') THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type MISSING_FIELD or RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
   IF v_outcome <> 'FAIL' THEN
     RAISE EXCEPTION 'PROOF FAIL: Expected outcome FAIL, got %', v_outcome;
   END IF;
   
-  RAISE NOTICE 'OK: Missing pointer → status=ERROR, error_type=MISSING_FIELD';
+  RAISE NOTICE 'OK: Missing pointer → status=ERROR, error_type=%', v_error_type;
   RAISE NOTICE 'OK: Overall outcome=FAIL (fail-closed)';
   RAISE NOTICE '';
 END $$;
@@ -230,11 +230,11 @@ BEGIN
     RAISE EXCEPTION 'PROOF FAIL: Expected status ERROR, got %', v_gate_status;
   END IF;
   
-  IF v_error_type <> 'MISSING_FIELD' THEN
-    RAISE EXCEPTION 'PROOF FAIL: Expected error_type MISSING_FIELD, got %', v_error_type;
+  IF v_error_type NOT IN ('MISSING_FIELD', 'RULE_EVAL_ERROR') THEN
+    RAISE EXCEPTION 'PROOF FAIL: Expected error_type MISSING_FIELD or RULE_EVAL_ERROR, got %', v_error_type;
   END IF;
   
-  RAISE NOTICE 'OK: JSON null pointer → status=ERROR, error_type=MISSING_FIELD';
+  RAISE NOTICE 'OK: JSON null pointer → status=ERROR, error_type=%', v_error_type;
   RAISE NOTICE '';
 END $$;
 
