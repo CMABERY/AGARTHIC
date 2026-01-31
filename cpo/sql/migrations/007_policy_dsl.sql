@@ -116,6 +116,7 @@ DECLARE
   v_arg2 jsonb;
   v_val1 jsonb;
   v_val2 jsonb;
+  i int;
 BEGIN
   v_op := upper(COALESCE(p_rule->>'op', 'TRUE'));
 
@@ -132,11 +133,23 @@ BEGIN
     v_arg2 := p_rule->'args'->1;
   END IF;
 
-  -- Logical operators (recursive)
+  -- Logical operators (recursive, N-ary via args array)
   IF v_op = 'AND' THEN
+    IF p_rule ? 'args' AND jsonb_typeof(p_rule->'args') = 'array' THEN
+      FOR i IN 0..jsonb_array_length(p_rule->'args') - 1 LOOP
+        IF NOT cpo.eval_rule(p_ctx, p_rule->'args'->i) THEN RETURN false; END IF;
+      END LOOP;
+      RETURN true;
+    END IF;
     RETURN cpo.eval_rule(p_ctx, v_arg1) AND cpo.eval_rule(p_ctx, v_arg2);
   END IF;
   IF v_op = 'OR' THEN
+    IF p_rule ? 'args' AND jsonb_typeof(p_rule->'args') = 'array' THEN
+      FOR i IN 0..jsonb_array_length(p_rule->'args') - 1 LOOP
+        IF cpo.eval_rule(p_ctx, p_rule->'args'->i) THEN RETURN true; END IF;
+      END LOOP;
+      RETURN false;
+    END IF;
     RETURN cpo.eval_rule(p_ctx, v_arg1) OR cpo.eval_rule(p_ctx, v_arg2);
   END IF;
   IF v_op = 'NOT' THEN
@@ -158,14 +171,29 @@ BEGIN
     RETURN v_val1 IS NOT NULL;
   END IF;
 
+  -- String operators
+  IF v_op = 'STARTS_WITH' THEN
+    RETURN v_val1 IS NOT NULL
+       AND v_val2 IS NOT NULL
+       AND (v_val1 #>> '{}') LIKE ((v_val2 #>> '{}') || '%%');
+  END IF;
+
+  -- Set membership: IN(value, array)
+  IF v_op = 'IN' THEN
+    IF v_val2 IS NULL OR jsonb_typeof(v_val2) != 'array' THEN
+      RETURN false;
+    END IF;
+    RETURN v_val1 IN (SELECT jsonb_array_elements(v_val2));
+  END IF;
+
   -- Unknown operator
   RAISE EXCEPTION 'Unknown operator: %', v_op;
 END;
 $$;
 
 COMMENT ON FUNCTION cpo.eval_rule IS
-  'Rule evaluator. Supports EQ, NEQ, AND, OR, NOT, TRUE, FALSE, EXISTS. '
-  'Arguments resolved via _resolve_arg (pointer or literal).';
+  'Rule evaluator. Supports EQ, NEQ, AND, OR, NOT, TRUE, FALSE, EXISTS, STARTS_WITH, IN. '
+  'AND/OR support N-ary args arrays. Arguments resolved via _resolve_arg (pointer or literal).';
 
 
 -- ---------------------------------------------------------------------------
