@@ -297,20 +297,27 @@ BEGIN
   -- Insert artifacts iff applied (PASS/PASS_WITH_EXCEPTION) and not dry-run
   IF v_applied THEN
     IF (p_artifacts ? 'charters') THEN
-      INSERT INTO cpo.cpo_charters(agent_id, action_log_id, content)
-      SELECT p_agent_id, v_action_log_id, elem
+      INSERT INTO cpo.cpo_charters(agent_id, action_log_id, charter_version_id, content)
+      SELECT p_agent_id, v_action_log_id,
+             COALESCE((elem->>'charter_version_id')::uuid, public.gen_random_uuid()),
+             elem
       FROM jsonb_array_elements(p_artifacts->'charters') AS elem;
     END IF;
 
     IF (p_artifacts ? 'charter_activations') THEN
-      INSERT INTO cpo.cpo_charter_activations(agent_id, action_log_id, content)
-      SELECT p_agent_id, v_action_log_id, elem
+      INSERT INTO cpo.cpo_charter_activations(agent_id, action_log_id, activation_id, charter_version_id, content)
+      SELECT p_agent_id, v_action_log_id,
+             COALESCE((elem->>'activation_id')::uuid, public.gen_random_uuid()),
+             (elem->>'charter_version_id')::uuid,
+             elem
       FROM jsonb_array_elements(p_artifacts->'charter_activations') AS elem;
     END IF;
 
     IF (p_artifacts ? 'state_snapshots') THEN
-      INSERT INTO cpo.cpo_state_snapshots(agent_id, action_log_id, content)
-      SELECT p_agent_id, v_action_log_id, elem
+      INSERT INTO cpo.cpo_state_snapshots(agent_id, action_log_id, state_snapshot_id, content)
+      SELECT p_agent_id, v_action_log_id,
+             COALESCE((elem->>'state_snapshot_id')::uuid, public.gen_random_uuid()),
+             elem
       FROM jsonb_array_elements(p_artifacts->'state_snapshots') AS elem;
     END IF;
 
