@@ -118,12 +118,6 @@ BEGIN
       RAISE EXCEPTION 'STALE_CONTEXT'
         USING ERRCODE='40001',
               HINT='Expected refs do not match current heads; map to HTTP 409 and retry after refresh.';
-    END IF;IF p_expected_charter_activation_id <> v_cur_charter_activation_id
-         OR p_expected_state_snapshot_id <> v_cur_state_snapshot_id THEN
-        RAISE EXCEPTION 'STALE_CONTEXT'
-          USING ERRCODE='40001',
-                HINT='Expected refs do not match current heads; map to HTTP 409 and retry after refresh.';
-      END IF;
     END IF;
   END IF;
 
