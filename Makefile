@@ -1,6 +1,6 @@
 # Makefile — CPO Database Operations
 #
-# CANON_VERSION: 2
+# CANON_VERSION: 1
 # Phase: 1 (Deployability)
 # D1.5 Resolution: C — Authoritative I1 verification entrypoint
 #
@@ -63,6 +63,7 @@ PATCHES := \
 	cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql \
 	cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql \
 	cpo/sql/patches/p6_envelope_persistence.sql \
+	cpo/sql/patches/p6_commit_action_envelope_wiring.sql \
 	cpo/sql/patches/p6_proof_envelope_hash_coherence.sql
 
 ALL_SQL := $(MIGRATIONS) $(PATCHES)

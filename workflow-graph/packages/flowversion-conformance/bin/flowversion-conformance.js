@@ -15,14 +15,14 @@ import { spawnSync } from 'node:child_process';
 import { readdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SPEC_VERSION, CANON_VERSION } from '../src/index.js';
+import { SPEC_VERSION, FLOWVERSION_CANON_VERSION } from '../src/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
 function printBanner() {
   // Always print a version banner for log-greppable CI diagnostics.
-  process.stdout.write(`flowversion-conformance spec=${SPEC_VERSION} canon=${CANON_VERSION} node=${process.version}\n`);
+  process.stdout.write(`flowversion-conformance spec=${SPEC_VERSION} canon=${FLOWVERSION_CANON_VERSION} node=${process.version}\n`);
 }
 
 

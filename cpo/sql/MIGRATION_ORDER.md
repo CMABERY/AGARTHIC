@@ -1,104 +1,53 @@
-# Migration Application Order
+# CPO SQL Migration + Patch Order
 
-**CANON_VERSION:** 2  
-**Last Updated:** 2026-01-31  
-**Phase:** 2 (Contract Lock)
+**CANON_VERSION:** 1  
+**Last Updated:** 2026-02-01  
 
-## Purpose
+This file is the authoritative ordering for applying CPO SQL to a fresh Postgres instance.
+It must match the ordering used by `make db-apply` (see the root Makefile).
 
-This document defines the authoritative order for applying CPO database migrations.
-Applying migrations out of order will result in failures due to missing dependencies.
+## Migrations (baseline, schema-first)
 
-## Invariant (I1)
+1. `cpo/sql/migrations/000_bootstrap.sql`
+2. `cpo/sql/migrations/006_commit_action_p3_surgical.sql`
+3. `cpo/sql/migrations/007_policy_dsl.sql`
+4. `cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql`
 
-> A fresh Postgres 15+ instance, given only these migrations applied in order,
-> must reach a fully functional state with no manual intervention.
+## Patches (phase-ordered, including proofs/guards)
 
-## Application Order
-
-| Order | File | Purpose | Dependencies |
-|-------|------|---------|--------------|
-| 1 | `000_bootstrap.sql` | Schema, roles, extensions, base tables | None (fresh DB) |
-| 2 | `006_commit_action_p3_surgical.sql` | Core commit_action function (P3) | Bootstrap tables |
-| 3 | `007_policy_dsl.sql` | Policy DSL: eval_rule, jsonptr_get | commit_action v1 |
-| 4 | `009_commit_action_gate_integration_p3_surgical.sql` | Gate integration wiring | Policy DSL |
-
-## Patch Application Order
-
-Patches are applied after migrations. Order matters for patches that depend on each other.
-
-| Order | File | Purpose |
-|-------|------|---------|
-| 1 | `p2_artifact_table_registry_v3.sql` | Artifact registry + immutability guards |
-| 2 | `p2_durability_drill_wiring.sql` | Durability verification |
-| 3 | `p2_durability_drill_wiring_v2_1.sql` | Durability v2.1 refinements |
-| 4 | `p2_proof_durability_wiring.sql` | Durability proofs |
-| 5 | `p2_proof_write_aperture_coverage_v3.sql` | Write aperture coverage proofs |
-| 6 | `p2_contract_declaration.sql` | Contract version + artifact schema registry |
-| 7 | `p2_contract_enforcement.sql` | Fail-closed artifact validator (`validate_artifacts`) |
-| 8 | `p3_gate_engine_missing_field_patch.sql` | Gate engine field fixes |
-| 9 | `p3_missing_field_semantics_patch.sql` | Missing field semantics |
-| 10 | `p3_toctou_bypass_removal_patch.sql` | TOCTOU bypass removal (calls `validate_artifacts`) |
-| 11 | `p3_proof_default_deny_fail_closed.sql` | Default deny proofs |
-| 12 | `p3_proof_error_bypasses_exceptions.sql` | Error bypass proofs |
-| 13 | `p3_proof_kernel_non_exceptionable.sql` | Kernel non-exceptionable proofs |
-| 14 | `p3_proof_missing_field_semantics.sql` | Field semantics proofs |
-| 15 | `p3_proof_no_semantic_bypass.sql` | Semantic bypass proofs |
-| 16 | `p3_proof_resolved_inputs_required.sql` | Resolved inputs proofs |
-| 17 | `p3_proof_toctou_closed.sql` | TOCTOU closure proofs |
-| 18 | `p4_exception_expiry_enforcement_v3.sql` | P4 exception expiry enforcement |
-| 19 | `p4_exception_expiry_proofs_v3.sql` | P4 exception expiry proofs |
-| 20 | `p6_change_control_kernel_patch.sql` | P6 change control kernel |
-| 21 | `p6_change_control_proofs.sql` | P6 change control proofs |
-| 22 | `p6_ci_guard_change_control.sql` | P6 CI guards |
-| 23 | `011_drift_detection.sql` | Drift detection functions |
-| 24 | `011_drift_detection_selftest.sql` | Drift detection self-tests |
-| 25 | `p2_contract_proof.sql` | Contract lock proofs (8 proofs) |
-
-## Verification Commands
-
-```bash
-# 1. Start fresh Postgres
-docker run -d --name cpo-test-db \
-  -e POSTGRES_PASSWORD=test \
-  -e POSTGRES_DB=cpo_test \
-  postgres:15
-sleep 5
-
-# 2. Apply bootstrap
-docker exec -i cpo-test-db psql -U postgres -d cpo_test \
-  < cpo/sql/migrations/000_bootstrap.sql
-
-# 3. Verify bootstrap
-docker exec cpo-test-db psql -U postgres -d cpo_test \
-  -c "SELECT cpo.bootstrap_verify();"
-
-# 4. Apply full chain (authoritative)
-make db-apply \
-  DB_HOST=localhost DB_PORT=5432 DB_USER=postgres DB_NAME=cpo_test DB_PASSWORD=test
-
-# 5. Cleanup
-docker rm -f cpo-test-db
-```
-
-## Role Requirements
-
-Before applying `p2_artifact_table_registry_v3.sql`, the executing role must be granted
-`cpo_migration`:
-
-```sql
-GRANT cpo_migration TO postgres;  -- or your deploy user
-```
+1. `cpo/sql/patches/p2_artifact_table_registry_v3.sql`
+2. `cpo/sql/patches/p2_durability_drill_wiring.sql`
+3. `cpo/sql/patches/p2_durability_drill_wiring_v2_1.sql`
+4. `cpo/sql/patches/p2_proof_durability_wiring.sql`
+5. `cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql`
+6. `cpo/sql/patches/p2_contract_declaration.sql`
+7. `cpo/sql/patches/p2_contract_enforcement.sql`
+8. `cpo/sql/patches/p3_gate_engine_missing_field_patch.sql`
+9. `cpo/sql/patches/p3_missing_field_semantics_patch.sql`
+10. `cpo/sql/patches/p3_toctou_bypass_removal_patch.sql`
+11. `cpo/sql/patches/p3_proof_default_deny_fail_closed.sql`
+12. `cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql`
+13. `cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql`
+14. `cpo/sql/patches/p3_proof_missing_field_semantics.sql`
+15. `cpo/sql/patches/p3_proof_no_semantic_bypass.sql`
+16. `cpo/sql/patches/p3_proof_resolved_inputs_required.sql`
+17. `cpo/sql/patches/p3_proof_toctou_closed.sql`
+18. `cpo/sql/patches/p4_exception_expiry_enforcement_v3.sql`
+19. `cpo/sql/patches/p4_exception_expiry_proofs_v3.sql`
+20. `cpo/sql/patches/p6_change_control_kernel_patch.sql`
+21. `cpo/sql/patches/p6_change_control_proofs.sql`
+22. `cpo/sql/patches/p6_ci_guard_change_control.sql`
+23. `cpo/sql/patches/011_drift_detection.sql`
+24. `cpo/sql/patches/011_drift_detection_selftest.sql`
+25. `cpo/sql/patches/p2_contract_proof.sql`
+26. `cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql`
+27. `cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql`
+28. `cpo/sql/patches/p6_envelope_persistence.sql`
+29. `cpo/sql/patches/p6_commit_action_envelope_wiring.sql`
+30. `cpo/sql/patches/p6_proof_envelope_hash_coherence.sql`
 
 ## Notes
 
-1. **Proofs are assertions, not schema changes.** They verify invariants but don't modify structure.
-2. **Patches with version suffixes** (e.g., `_v3`, `_v2_1`) supersede earlier versions.
-3. **Order 4+ patches** can generally be applied in any order after the core migrations,
-   but the order above is tested and recommended.
-
----
-
-*This document is authoritative per `INTEGRATION_ROADMAP.md` Phase 1.2.*
-
-*Updated in Phase 2 to include Contract Lock patches and to reference the canonical `make db-apply` entrypoint.*
+- Proof patches (`p*_proof_*.sql`) are assertions and should be safe to re-run.
+- Guard patches enforce immutability and phase constraints at runtime.
+- Phase 6 envelope persistence is wired into the write aperture via `p6_commit_action_envelope_wiring.sql`.

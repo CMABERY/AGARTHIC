@@ -4,7 +4,8 @@
 -- Creates:
 --   1. pgcrypto extension (for sha256)
 --   2. cpo.cpo_envelopes table (envelope storage with computed hash)
---   3. cpo.persist_envelope() — validates, canonicalizes, hashes, and stores
+--   3. cpo.commit_action() (artifacts.envelopes) — runtime write aperture path
+--   4. cpo.persist_envelope() — INTERNAL helper (proofs/maintenance only)
 --   4. cpo.canonicalize_jsonb() — RFC 8785 / JCS canonicalization in SQL
 --
 -- Hash coherence contract:
@@ -48,7 +49,7 @@ BEGIN
     ALTER TABLE cpo.cpo_envelopes OWNER TO cpo_owner;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
-    GRANT INSERT, SELECT ON cpo.cpo_envelopes TO cpo_commit;
+    GRANT SELECT ON cpo.cpo_envelopes TO cpo_commit;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_read') THEN
     GRANT SELECT ON cpo.cpo_envelopes TO cpo_read;
@@ -262,9 +263,7 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_owner') THEN
     ALTER FUNCTION cpo.persist_envelope(text, jsonb, text, uuid) OWNER TO cpo_owner;
   END IF;
-  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cpo_commit') THEN
-    GRANT EXECUTE ON FUNCTION cpo.persist_envelope(text, jsonb, text, uuid) TO cpo_commit;
-  END IF;
+  -- NOTE: persist_envelope is an INTERNAL helper. Runtime writers (cpo_commit) must use commit_action.
 END $$;
 
 -- Register envelopes in the contract artifact schema (additive, non-breaking)
@@ -277,5 +276,38 @@ VALUES
    'envelope_hash',
    'Keystone envelopes with DB-computed hash coherence (Phase 6).')
 ON CONFLICT (artifact_key) DO NOTHING;
+
+
+-- Register cpo_envelopes in the artifact table registry (write-aperture coverage).
+-- This is required if commit_action writes to cpo.cpo_envelopes.
+DO $$
+BEGIN
+  IF pg_has_role(session_user, 'cpo_migration', 'MEMBER') THEN
+    SET LOCAL cpo.migration_in_progress = 'true';
+    INSERT INTO cpo.cpo_artifact_table_registry (
+      artifact_type, table_regclass, table_kind,
+      logical_id_column, logical_seq_column,
+      insert_agent_id_column, insert_action_log_id_column, insert_content_column,
+      is_canonical, is_exported, export_order, description
+    ) VALUES (
+      'envelope', 'cpo.cpo_envelopes'::regclass, 'canonical',
+      'envelope_hash', NULL,
+      'agent_id', 'action_log_id', 'envelope',
+      true, true, 15, 'Keystone evidence envelopes. logical_id=envelope_hash; content=envelope.'
+    )
+    ON CONFLICT (artifact_type) DO UPDATE SET
+      table_regclass = EXCLUDED.table_regclass,
+      table_kind = EXCLUDED.table_kind,
+      logical_id_column = EXCLUDED.logical_id_column,
+      logical_seq_column = EXCLUDED.logical_seq_column,
+      insert_agent_id_column = EXCLUDED.insert_agent_id_column,
+      insert_action_log_id_column = EXCLUDED.insert_action_log_id_column,
+      insert_content_column = EXCLUDED.insert_content_column,
+      is_canonical = EXCLUDED.is_canonical,
+      is_exported = EXCLUDED.is_exported,
+      export_order = EXCLUDED.export_order,
+      description = EXCLUDED.description;
+  END IF;
+END $$;
 
 COMMIT;

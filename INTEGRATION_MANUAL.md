@@ -294,7 +294,7 @@ REQUIRED:
 
 ### Operational Wiring (Blocked on Integration Tests)
 
-- [ ] CPO commit_action accepts envelope-based artifacts
+- [x] CPO commit_action accepts envelope-based artifacts
 - [ ] FlowVersion produces envelope_hash for CPO storage
 - [ ] Adapter certification includes envelope propagation check
 - [ ] Replay runner consumes evidence chain

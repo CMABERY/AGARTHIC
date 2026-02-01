@@ -1,23 +1,53 @@
 {
-  "schema_version": 2,
-  "canon_version": 2,
-  "audit_timestamp_utc": "2026-01-31T17:50:00Z",
-  "repo_state": { "file_count": 182 },
+  "audit_timestamp_utc": "2026-02-01T00:00:00Z",
+  "canon_version": 1,
+  "integrity": {
+    "manifest_file": "REPO_MANIFEST.txt",
+    "manifest_sha256": "dc79bc9ee2d412834d240b75e90cc13b0f5abffbec0e4074501a0981179ae263",
+    "payload_definition": {
+      "excluded_files": [
+        "AUDIT_STAMP.json",
+        "CANONICAL_CLOSEOUT.md",
+        "REPO_HASHES.sha256",
+        "REPO_MANIFEST.txt"
+      ],
+      "excluded_reason": "Authority/closeout metadata is excluded from payload_root_hash to avoid self-referential hashing cycles."
+    },
+    "payload_file_count": 194,
+    "payload_hash_algorithm": "sha256",
+    "payload_root_hash": "105cdfc0bdaf192b9b9e90e703dca3611c558f5df52a8ee70296a743428b58da",
+    "repo_file_count": 198
+  },
   "phase_status": {
-    "phase_0": "COMPLETE",
-    "phase_1": "PENDING_CI_GREEN"
+    "phase_0_repo_layout": "PRESENT",
+    "phase_1_integrity_files": "REGENERATED",
+    "phase_2_contract_schema": "PRESENT (Tier 2)",
+    "phase_3_toctou": "PRESENT (Tier 2)",
+    "phase_4_5_gate_runtime": "PRESENT (Tier 2)",
+    "phase_6_envelope_persistence": "PRESENT (Tier 2) + WIRED (Tier 2)",
+    "tier1_execution_evidence": "PARTIAL (offline verifier present; no Postgres/CI logs in this bundle)"
   },
-  "hotfixes": {
-    "HF1": { "file": "006_commit_action_p3_surgical.sql", "issue": "Duplicate TOCTOU block" },
-    "HF2": { "file": "009_commit_action_gate_integration_p3_surgical.sql", "issue": "Duplicate TOCTOU block" },
-    "HF3": { "file": "p3_proof_default_deny_fail_closed.sql", "issue": "PROOF 5 error_type mismatch" },
-    "HF4": { "file": "p3_proof_default_deny_fail_closed.sql", "issue": "PROOF 6 error_type mismatch" },
-    "HF5": { 
-      "file": "p3_proof_error_bypasses_exceptions.sql", 
-      "issue": "PROOF 3 expected FAIL but impl returns ERROR due to pointer path",
-      "fix": "Relaxed assertion to accept ERROR; core invariant proven by PROOF 1&2",
-      "timestamp": "2026-01-31T17:50:00Z"
+  "reconciliation": {
+    "canon_version_reconciled": true,
+    "notes": [
+      "Root-level CANON_VERSION normalized to 1 to match VERSION_LOCK.json and Keystone runtime types.",
+      "FlowVersion package canonical version renamed to FLOWVERSION_CANON_VERSION to avoid cross-domain ambiguity."
+    ]
+  },
+  "schema_version": 3,
+  "spec_version": "1.0.0",
+  "verdict": "INCOMPLETE_NO_EXECUTABLE_DB_EVIDENCE",
+  "version_authority": {
+    "source_of_truth": "VERSION_LOCK.json",
+    "version_lock_sha256": "0bfbc1178c4baba79cdcfdf3b8a68d3b94085b6b79822dd52d367f80abf570ed"
+  },
+  "write_aperture": {
+    "invariant": "All runtime writes must traverse cpo.commit_action (or approved canonical equivalent).",
+    "status": {
+      "commit_action_persists_envelopes": "ENFORCED (p6_commit_action_envelope_wiring.sql)",
+      "cpo_commit_execute_on_persist_envelope": "REVOKED (Phase 6 patch updated)",
+      "cpo_commit_insert_on_cpo_envelopes": "REVOKED (Phase 6 patch updated)",
+      "persist_envelope_execute_to_cpo_migration": "GRANTED (migration/proofs only)"
     }
-  },
-  "verdict": "PHASE_1_PENDING_CI"
+  }
 }

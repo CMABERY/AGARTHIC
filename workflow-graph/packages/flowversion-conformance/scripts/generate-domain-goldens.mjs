@@ -20,7 +20,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { findConfigPath, loadConformanceConfig } from '../src/config.js';
 import { loadAdapter } from '../src/load-adapter.js';
 import { canonicalize, serialize, hashCanonical } from '../src/canonicalize.js';
-import { SPEC_VERSION, CANON_VERSION } from '../src/index.js';
+import { SPEC_VERSION, FLOWVERSION_CANON_VERSION } from '../src/index.js';
 
 const configPath = findConfigPath();
 if (!configPath) {
@@ -48,7 +48,7 @@ if (!goldens || !Array.isArray(goldens.vectors)) {
 
 goldens._meta = {
   spec_version: SPEC_VERSION,
-  canon_version: CANON_VERSION,
+  canon_version: FLOWVERSION_CANON_VERSION,
   generated_at: new Date().toISOString(),
   generator: 'flowversion-conformance'
 };

@@ -11,7 +11,7 @@
 -- IDEMPOTENCY: All statements use IF NOT EXISTS / DO $$ guards
 -- FAIL-CLOSED: No assumptions about pre-existing state
 --
--- CANON_VERSION: 2
+-- CANON_VERSION: 1
 -- CREATED: 2026-01-31 (Phase 1.1)
 
 BEGIN;
@@ -465,7 +465,7 @@ BEGIN
   
   v_result := jsonb_build_object(
     'bootstrap_version', '1.0.0',
-    'canon_version', 2,
+    'canon_version', 1,
     'schema_exists', (SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'cpo')),
     'pgcrypto_exists', (SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pgcrypto')),
     'table_count', v_table_count,

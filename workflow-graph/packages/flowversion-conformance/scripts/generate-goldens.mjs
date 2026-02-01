@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { canonicalize, serialize, hashCanonical } from '../src/canonicalize.js';
-import { SPEC_VERSION, CANON_VERSION } from '../src/index.js';
+import { SPEC_VERSION, FLOWVERSION_CANON_VERSION } from '../src/index.js';
 
 const sourcePath = new URL('./goldens.source.json', import.meta.url);
 const outPath = new URL('../goldens.json', import.meta.url);
@@ -25,7 +25,7 @@ for (const vec of vectors) {
 
 const _meta = {
   spec_version: SPEC_VERSION,
-  canon_version: CANON_VERSION,
+  canon_version: FLOWVERSION_CANON_VERSION,
   generated_at: new Date().toISOString(),
   generator: 'flowversion-conformance'
 };

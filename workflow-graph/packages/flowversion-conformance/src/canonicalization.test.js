@@ -17,7 +17,7 @@ import {
   hashValueOrAbsent,
   ABSENT 
 } from './canonicalize.js';
-import { SPEC_VERSION, CANON_VERSION } from './index.js';
+import { SPEC_VERSION, FLOWVERSION_CANON_VERSION } from './index.js';
 
 describe('Canonicalization - Idempotence (Invariant 1)', () => {
   test('canonicalize(canonicalize(S)) === canonicalize(S)', () => {
@@ -243,7 +243,7 @@ describe('Golden Vectors (Normative)', () => {
     test('Goldens file embeds spec/canon versions', () => {
     assert.ok(_meta && typeof _meta === 'object');
     assert.equal(_meta.spec_version, SPEC_VERSION);
-    assert.equal(_meta.canon_version, CANON_VERSION);
+    assert.equal(_meta.canon_version, FLOWVERSION_CANON_VERSION);
     assert.equal(_meta.generator, 'flowversion-conformance');
     assert.ok(typeof _meta.generated_at === 'string');
   });

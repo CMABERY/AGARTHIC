@@ -19,7 +19,7 @@
 
 ---
 
-## Tables (15)
+## Tables (16)
 
 | Table | Purpose |
 |-------|---------|
@@ -34,6 +34,7 @@
 | `cpo_exceptions` | Time-bounded authority grants allowing specific gate failures to pass |
 | `cpo_exception_events` | Events affecting exception lifecycle |
 | `cpo_changes` | Change control packages for charter mutations |
+| `cpo_envelopes` | Immutable evidence envelope store (hash-coherent Keystone envelopes) |
 | `cpo_drift_events` | Detected drift signals from the drift detection engine |
 | `cpo_drift_resolutions` | Recorded resolutions of previously detected drift events |
 | `cpo_artifact_table_registry` | Registry mapping artifact type names to target tables |

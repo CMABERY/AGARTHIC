@@ -14,7 +14,7 @@
 export const SPEC_VERSION = "0.1.0";
 
 // Canonicalization rules version (bump on any change that could alter canonical bytes / hashes)
-export const CANON_VERSION = "0.1.0";
+export const FLOWVERSION_CANON_VERSION = "0.1.0";
 
 
 export { 

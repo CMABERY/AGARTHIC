@@ -23,7 +23,7 @@ concepts:
     definition: >
       The single entry point (commit_action) through which all state mutations
       pass. No artifact reaches a table without traversing this function.
-    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+    source: [cpo/sql/patches/p6_commit_action_envelope_wiring.sql]
 
   - term: fail-closed
     kind: concept
@@ -122,6 +122,14 @@ tables:
     definition: Change control packages for charter mutations.
     source: [cpo/sql/patches/p6_change_control_kernel_patch.sql]
 
+  - term: cpo_envelopes
+    kind: table
+    phase: 6
+    definition: |
+      Immutable evidence envelope store for Keystone FlowVersion envelopes.
+      Each row binds a Keystone-declared envelope_hash to a DB-computed canonical_json + sha256.
+    source: [cpo/sql/patches/p6_envelope_persistence.sql]
+
   - term: cpo_drift_events
     kind: table
     definition: Detected drift signals emitted by the drift detection engine.
@@ -154,7 +162,7 @@ functions_write_aperture:
     definition: >
       Canonical write aperture. All state mutations pass through this function.
       Signature: (text, jsonb, jsonb, uuid, uuid) RETURNS jsonb.
-    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+    source: [cpo/sql/patches/p6_commit_action_envelope_wiring.sql]
 
   - term: validate_artifacts
     kind: function
@@ -388,21 +396,21 @@ error_codes:
     definition: >
       TOCTOU guard — raised when expected_charter_activation_id or
       expected_state_snapshot_id does not match current head state.
-    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+    source: [cpo/sql/patches/p6_commit_action_envelope_wiring.sql]
 
   - term: CPO98
     kind: constant
     definition: >
       KERNEL_CHANGE_CONTROL_FAILED — raised when evaluate_change_control_kernel
       throws an unhandled exception. Transaction aborted (fail-closed).
-    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+    source: [cpo/sql/patches/p6_commit_action_envelope_wiring.sql]
 
   - term: CPO99
     kind: constant
     definition: >
       KERNEL_GATE_EVALUATION_FAILED — raised when evaluate_gates throws
       an unhandled exception. Transaction aborted (fail-closed).
-    source: [cpo/sql/patches/p3_toctou_bypass_removal_patch.sql]
+    source: [cpo/sql/patches/p6_commit_action_envelope_wiring.sql]
 
 # ============================================================================
 # GATE OUTCOME VALUES
