@@ -4,13 +4,6 @@ This is the single authoritative register of open governance items.
 
 ## Active
 
-#7 Documentation Freshness Discipline
-  Priority: HIGH (upgraded from MEDIUM, Session 3)
-  Blast radius: Compounds every session
-  Coupled with: #10
-  Problem: Governance docs historically lived only in chat history; now imported into repo. Remaining work is mechanical freshness checks + ongoing calibration.
-  Closure: Docs committed to gov/, mechanical freshness check, FORGE_PENDING rule.
-
 #10 Language Calibration
   Priority: MEDIUM
   Coupled with: #7
@@ -29,6 +22,7 @@ PKG — Evidence Portability
 
 ## Recently Closed
 
+#7    Governance persistence & patchability  2026-02-04  commits 33feee3,127aa28 (material closure: kernel+arch+HGHP in gov/)
 C-2   Historical validation          2026-02-04  Session 2
 #2    Exit-code capture              2026-02-04  Session 2
 #9    pipefail in Make targets       2026-02-04  Session 2
