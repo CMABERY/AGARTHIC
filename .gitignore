@@ -1,3 +1,6 @@
 
 # local run artifacts
 run_forge_patch_*.exit
+
+# local run artifacts
+run_forge_patch_*.exit
