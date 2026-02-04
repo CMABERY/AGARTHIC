@@ -4,8 +4,8 @@
 **Status:** CLOSED (v2.2 — C-5 editorial fix)  
 **Parent:** Human-Gate Hardening Pack v1 (HGHP-v1)  
 **Enum source (Python):** `~/.openclaw/extensions/gcp-propose/py/handler.py` → `EXPECTED_INTENTS`  
-**Enum source (TypeScript):** `~/.openclaw/extensions/gcp-propose/src/gcp-propose-tool.ts` → `PARAMS_SCHEMA.properties.intent_type.enum`  
-**Enum source (Schema):** `proposal.schema.json` → `intents{}` keys + envelope enum  
+**Enum source (TypeScript):** WITHDRAWN (TS-layer enum coupling not implemented in this repo).
+**Enum source (Schema):** WITHDRAWN (schema-based enum enforcement not implemented in this repo).
 **Drift enforcement:** Handler denies if `sorted(PY_ENUM) ≠ sorted(TS_ENUM) ≠ sorted(SCHEMA_INTENTS_KEYS)` — schema drift tripwire  
 **Fail-closed posture:** Any intent type not listed in §2 is NOT REVIEWABLE. Proposals of unlisted types are HELD.
 
@@ -117,8 +117,8 @@ ENUM COVERAGE VERIFICATION
 ===========================
 Date:           2026-02-04
 Enum source (PY):  ~/.openclaw/extensions/gcp-propose/py/handler.py → EXPECTED_INTENTS
-Enum source (TS):  ~/.openclaw/extensions/gcp-propose/src/gcp-propose-tool.ts → PARAMS_SCHEMA...enum
-Enum source (Schema): proposal.schema.json → intents{} keys + envelope enum
+Enum source (TS): WITHDRAWN (no TS-layer coupling in this repo).
+Enum source (Schema): WITHDRAWN (no schema-based enforcement in this repo).
 Drift enforcement: Handler denies on sorted(PY) ≠ sorted(TS) ≠ sorted(SCHEMA_KEYS)
 Total intents:  3
 Matrix rows:    3
@@ -161,8 +161,7 @@ SCOPE LEDGER — v0
 as_of_utc:            2026-02-04T00:00:00Z
 enum_source_py:       ~/.openclaw/extensions/gcp-propose/py/handler.py
 enum_source_ts:       ~/.openclaw/extensions/gcp-propose/src/gcp-propose-tool.ts
-enum_source_schema:   proposal.schema.json
-
+enum_source_schema:   WITHDRAWN (no schema enforcement in repo)
 intent_enum_sorted:   ["EVIDENCE_INGEST_PROPOSE",
                        "INVOICE_INPUTS_VALIDATE_PROPOSE",
                        "INVOICE_RECONCILE_PROPOSE"]
@@ -427,4 +426,4 @@ C-2 exercised only 1/3 intent types operationally (`INVOICE_RECONCILE_PROPOSE`).
 
 ---
 
-*HGHP-v1 §1.4 Instantiation. Document ID: HGHP-v1-S1.4. Status: CLOSED (v2.2 — C-5 editorial fix). Intent enum: 3 values, triple-coupled, drift-enforced. Enum hash: `b21c33c1bde662570ce204af12a8ce8f7ed33c5861539e8bc871770a2b3b00b8`. Scope ledger: v0. All closure conditions (C-1 through C-6): COMPLETE.*
+*HGHP-v1 §1.4 Instantiation. Document ID: HGHP-v1-S1.4. Status: CLOSED (v2.2 — C-5 editorial fix). Intent enum: 3 values, shell-canonical (gov/intent_enum.v1.txt) with mechanical verifier (gov/verify_intent_enum.sh). Enum hash: `b21c33c1bde662570ce204af12a8ce8f7ed33c5861539e8bc871770a2b3b00b8`. Scope ledger: v0. All closure conditions (C-1 through C-6): COMPLETE.*
