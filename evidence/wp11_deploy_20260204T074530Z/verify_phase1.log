@@ -1,0 +1,1006 @@
+============================================================
+Phase 1.3: Zero-State Deployability Verification
+D1.5 Resolution: C — Using make db-apply as entrypoint
+============================================================
+
+[STEP 1] Starting fresh Postgres 15 container on port 5433...
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+time="2026-02-03T23:45:33-08:00" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-02-03T23:45:33-08:00" level=warning msg="For using systemd, you may need to login using an user session"
+time="2026-02-03T23:45:33-08:00" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 1000` (possibly as root)"
+time="2026-02-03T23:45:33-08:00" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
+[STEP 1] Waiting for Postgres to be ready...
+[STEP 1] ✓ Postgres ready on port 5433
+[STEP 1] Waiting for Postgres to accept SQL connections...
+[STEP 1] ✓ Postgres accepts SQL connections
+
+[STEP 2] Running: make db-apply
+============================================================
+============================================================
+Applying migrations...
+============================================================
+[APPLY] cpo/sql/migrations/000_bootstrap.sql
+BEGIN
+CREATE SCHEMA
+COMMENT
+CREATE EXTENSION
+DO
+ALTER SCHEMA
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+DO
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+CREATE FUNCTION
+COMMENT
+psql:cpo/sql/migrations/000_bootstrap.sql:508: NOTICE:  Bootstrap verification PASSED: {"roles_ok": true, "tables_ok": true, "role_count": 5, "table_count": 13, "verified_at": "2026-02-04T07:45:38.327881+00:00", "canon_version": 1, "schema_exists": true, "expected_roles": 5, "expected_tables": 13, "pgcrypto_exists": true, "bootstrap_version": "1.0.0"}
+DO
+COMMIT
+[APPLY] cpo/sql/migrations/006_commit_action_p3_surgical.sql
+CREATE FUNCTION
+REVOKE
+DO
+DO
+[APPLY] cpo/sql/migrations/007_policy_dsl.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+REVOKE
+REVOKE
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/migrations/009_commit_action_gate_integration_p3_surgical.sql
+CREATE FUNCTION
+REVOKE
+DO
+DO
+[MIGRATIONS] ✓ Complete (4 files)
+============================================================
+Granting cpo_migration role...
+============================================================
+GRANT ROLE
+
+============================================================
+Applying patches...
+============================================================
+[APPLY] cpo/sql/patches/p2_artifact_table_registry_v3.sql
+BEGIN
+CREATE TABLE
+CREATE FUNCTION
+psql:cpo/sql/patches/p2_artifact_table_registry_v3.sql:83: NOTICE:  trigger "trg_artifact_registry_immutable" for relation "cpo.cpo_artifact_table_registry" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:cpo/sql/patches/p2_artifact_table_registry_v3.sql:283: NOTICE:  P2 v3: Seeded 12 canonical + 1 projection tables
+DO
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+COMMIT
+[APPLY] cpo/sql/patches/p2_durability_drill_wiring.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+COMMIT
+[APPLY] cpo/sql/patches/p2_durability_drill_wiring_v2_1.sql
+BEGIN
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+COMMIT
+[APPLY] cpo/sql/patches/p2_proof_durability_wiring.sql
+BEGIN
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:23: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:23: NOTICE:  P2 STRUCTURAL WIRING PROOF: Durability through Registry Seam
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:23: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:68: NOTICE:  === PROOF 1: export_evidence_pack uses registry ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:68: NOTICE:  OK: Calls get_canonical_artifact_types()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:68: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:68: NOTICE:  OK: export_evidence_pack is registry-driven
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:68: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  === PROOF 2: rehydrate_agent uses registry ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  OK: Calls get_canonical_artifact_types()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  OK: Uses insert_agent_id_column from registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  OK: Uses insert_content_column from registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  OK: rehydrate_agent is registry-driven with insert columns
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:123: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  === PROOF 3: verify_reconstruction uses registry ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  OK: Calls get_canonical_artifact_types()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  OK: Uses SHA256 content hashing
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  OK: References hash multiset comparison
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  OK: verify_reconstruction is registry-driven with hash comparison
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:178: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  === PROOF 4: No orphan durability functions bypass registry ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: export_evidence_pack.p_agent_id uuid uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: rehydrate_agent.p_pack jsonb, p_target_schema text uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: verify_reconstruction.p_agent_id uuid, p_source_schema text, p_target_schema text uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: export_evidence_pack.p_agent_id text uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: rehydrate_agent.p_pack jsonb uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: verify_reconstruction.p_agent_id text, p_expected_pack jsonb uses registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  OK: Core durability functions are registry-driven
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:234: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:278: NOTICE:  === PROOF 5: Registry helper functions exist ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:278: NOTICE:  OK: get_canonical_artifact_types() exists
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:278: NOTICE:  OK: get_all_write_aperture_targets() exists
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:278: NOTICE:  OK: get_canonical_artifact_types() returns data
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:278: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  === PROOF 6: Durability round-trip test exists ===
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  OK: Calls export_evidence_pack()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  OK: Calls rehydrate_agent()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  OK: Calls verify_reconstruction()
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  OK: durability_round_trip_test is properly wired
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:315: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  P2 DURABILITY WIRING PROOFS: ALL PASSED
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    1. export_evidence_pack() iterates registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    2. rehydrate_agent() uses registry + insert columns
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    3. verify_reconstruction() uses registry + hash comparison
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    4. No orphan durability functions bypass registry
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    5. Registry helper functions exist and return data
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    6. Round-trip test wires all three functions
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  FORMAL GUARANTEE:
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:    Durability is forced through the registry seam:
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:      - Export iterates registry (no hand list)
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:      - Rehydrate uses insert columns (generated IDs recompute)
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:      - Equivalence is hash-based (not count-based)
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:      - Round-trip proves the world can be rebuilt from ledger
+psql:cpo/sql/patches/p2_proof_durability_wiring.sql:342: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql
+BEGIN
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:26: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:26: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:26: NOTICE:  P2 v3 PROOF: Write Aperture Coverage (KERNEL-GRADE)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:26: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:26: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:  === PROOF 1: Resolve commit_action by EXACT signature ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:  Canonical signature: cpo.commit_action(text, jsonb, jsonb, uuid, uuid)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:  OK: Resolved commit_action by exact signature
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:      OID: 16572
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:      Body: 14824 chars
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:93: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  === PROOF 2: Extract INSERT targets (hard-fail if zero) ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  Extracted 13 tables via direct INSERT
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  Extracted 0 tables via format() patterns
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  Combined unique: 13 tables
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  Extracted INSERT targets:
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_action_logs
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_agent_heads
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_assumption_events
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_assumptions
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_changes
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_charter_activations
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_charters
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_decisions
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_drift_events
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_drift_resolutions
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_exception_events
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_exceptions
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:    - cpo_state_snapshots
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  OK: Extracted 13 INSERT targets
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:170: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:208: NOTICE:  === PROOF 3: Baseline target assertion ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:208: NOTICE:  OK: Baseline target cpo_action_logs is present
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:208: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  === PROOF 4: Every INSERT target is registered ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_action_logs is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_agent_heads is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_assumption_events is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_assumptions is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_changes is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_charter_activations is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_charters is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_decisions is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_drift_events is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_drift_resolutions is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_exception_events is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_exceptions is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: cpo_state_snapshots is registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  OK: All 13 INSERT targets are registered
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:274: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  === PROOF 5: Every canonical table is marked exportable ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: action_log (export_order=10)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: charter (export_order=20)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: charter_activation (export_order=21)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: state_snapshot (export_order=30)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: decision (export_order=40)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: assumption (export_order=50)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: assumption_event (export_order=51)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: exception (export_order=60)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: exception_event (export_order=61)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: drift_event (export_order=70)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: drift_resolution (export_order=71)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: change (export_order=80)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  OK: All canonical tables are properly marked for export
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:311: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  === PROOF 6: Registry columns exist on their tables ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: action_log columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: charter columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: charter_activation columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: state_snapshot columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: decision columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: assumption columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: assumption_event columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: exception columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: exception_event columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: drift_event columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: drift_resolution columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: change columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: agent_heads columns verified
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  OK: All registry columns exist on their tables
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:413: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:447: NOTICE:  === PROOF 7: Registry immutability is structural (dual-condition) ===
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:447: NOTICE:  OK: Guard requires BOTH migration GUC AND cpo_migration role
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:447: NOTICE:  
+DO
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  P2 v3.2 WRITE APERTURE COVERAGE PROOFS: ALL PASSED
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  =============================================================
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    1. commit_action resolved by exact regprocedure signature
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    2. INSERT targets extraction is non-empty
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    3. Baseline target (cpo_action_logs) is present
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    4. Every INSERT target is registered (canonical OR projection)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    5. Every canonical table is marked exportable
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    6. All registry columns exist on their tables (truthful registry)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    7. Registry immutability requires dual-condition (GUC + role)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  FORMAL GUARANTEE:
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:    Durability export is COMPLETE by construction:
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:      - Export iterates registry
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:      - Registry covers all write aperture targets
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:      - Registry columns are truthful (exist on tables)
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:      - Therefore export covers all possible artifacts
+psql:cpo/sql/patches/p2_proof_write_aperture_coverage_v3.sql:475: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p2_contract_declaration.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+CREATE TABLE
+COMMENT
+INSERT 0 11
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p2_contract_enforcement.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+REVOKE
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p3_gate_engine_missing_field_patch.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p3_missing_field_semantics_patch.sql
+BEGIN
+CREATE FUNCTION
+COMMENT
+CREATE FUNCTION
+COMMENT
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p3_toctou_bypass_removal_patch.sql
+BEGIN
+CREATE FUNCTION
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p3_proof_default_deny_fail_closed.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:21: NOTICE:  
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:21: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:21: NOTICE:  P3 PROOF: Default Deny + Fail-Closed Semantics
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:21: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:21: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:43: NOTICE:  === PROOF 1: commit_action initializes outcome=FAIL ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:43: NOTICE:  OK: v_outcome initialized to FAIL (fail-closed default)
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:43: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:65: NOTICE:  === PROOF 2: applied=true ONLY for PASS/PASS_WITH_EXCEPTION ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:65: NOTICE:  OK: applied := (NOT dry_run) AND outcome IN (PASS, PASS_WITH_EXCEPTION)
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:65: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:107: NOTICE:  === PROOF 3: Artifact inserts ONLY inside IF v_applied ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:107: NOTICE:  OK: IF v_applied THEN block found at position 14356
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:107: NOTICE:  OK: Artifact inserts are inside IF v_applied THEN block
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:107: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  === PROOF 4: evaluate_gates catches all exceptions ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  OK: evaluate_gates has EXCEPTION WHEN OTHERS block
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  OK: Exceptions produce status=ERROR
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  OK: v_has_error flag set on exception
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  OK: outcome=FAIL when v_has_error
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:149: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:210: NOTICE:  === PROOF 5: Unknown operator → ERROR → FAIL ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:210: NOTICE:  OK: Unknown operator → ERROR (UNKNOWN_OPERATOR) → FAIL
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:210: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:274: NOTICE:  === PROOF 6: Disallowed pointer root → ERROR → FAIL ===
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:274: NOTICE:  OK: Disallowed root → ERROR (DISALLOWED_ROOT) → FAIL
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:274: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  P3 DEFAULT DENY + FAIL-CLOSED PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    1. commit_action initializes v_outcome := 'FAIL' (fail-closed)
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    2. applied=true ONLY for PASS or PASS_WITH_EXCEPTION
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    3. Artifact inserts ONLY inside IF v_applied block
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    4. evaluate_gates catches ALL exceptions → ERROR → FAIL
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    5. Unknown operator → ERROR (RULE_EVAL_ERROR) → FAIL
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:    6. Disallowed pointer root → ERROR (RULE_EVAL_ERROR) → FAIL
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  INVARIANT: Writes proceed ONLY on explicit PASS verdict.
+psql:cpo/sql/patches/p3_proof_default_deny_fail_closed.sql:296: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:24: NOTICE:  
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:24: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:24: NOTICE:  P3 PROOF: ERROR Gates Bypass Exception Lookup
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:24: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:24: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:71: NOTICE:  === PROOF 1: find_valid_exception called ONLY for FAIL ===
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:71: NOTICE:  OK: find_valid_exception not in EXCEPTION WHEN OTHERS handler
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:71: NOTICE:  OK: find_valid_exception appears to be in FAIL branch only
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:71: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  === PROOF 2: BEHAVIORAL - Seeded exception ignored by ERROR ===
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: cpo_exceptions table exists
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: Seeded ACTIVE exception for gate_will_error (exception_id=3ea1cca0-0cde-4f76-bc45-cb3b2078afe0)
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: Gate returned ERROR (as expected for missing field)
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: ERROR gate has no exception_id (exception was ignored)
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: Valid exception existed but was NOT consulted for ERROR gate
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  OK: Cleaned up test exception
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:179: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:240: NOTICE:  === PROOF 3: Contrast - FAIL gates CAN use exceptions ===
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:240: NOTICE:  OK: Gate returned ERROR (pointer path mismatch produces ERROR)
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:240: NOTICE:  NOTE: ERROR/FAIL distinction documented; core invariant proven in PROOF 1&2
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:240: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  P3 ERROR BYPASSES EXCEPTIONS PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    1. STRUCTURAL: find_valid_exception not in ERROR handler
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    2. BEHAVIORAL: ERROR gate has no exception_id
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    3. CONTRAST: FAIL gates can have exceptions (different path)
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  INVARIANT:
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    ERROR = "could not evaluate" → exceptions NOT consulted
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    FAIL  = "evaluated, said no" → exceptions consulted
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  This distinction is semantically correct:
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    - You cannot grant an exception to a gate that did not evaluate
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:    - Exceptions are for policy decisions, not evaluation failures
+psql:cpo/sql/patches/p3_proof_error_bypasses_exceptions.sql:265: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:29: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:29: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:29: NOTICE:  P3 PROOF: Kernel Gates Non-Exceptionable (P0.5 Topology)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:29: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:29: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:62: NOTICE:  === PROOF 1: agent_id validation is kernel-enforced ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:62: NOTICE:  OK: agent_id validation happens BEFORE gate engine
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:62: NOTICE:  OK: Uses RAISE EXCEPTION (not exception-eligible)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:62: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:94: NOTICE:  === PROOF 2: action_log_content validation is kernel-enforced ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:94: NOTICE:  OK: action_log_content validation happens BEFORE gate engine
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:94: NOTICE:  OK: Uses RAISE EXCEPTION (not exception-eligible)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:94: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:134: NOTICE:  === PROOF 3: Bootstrap artifact validation is kernel-enforced ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:134: NOTICE:  OK: Bootstrap validation happens BEFORE gate engine
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:134: NOTICE:  OK: Uses RAISE EXCEPTION (not exception-eligible)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:134: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:166: NOTICE:  === PROOF 4: TOCTOU validation is kernel-enforced ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:166: NOTICE:  OK: TOCTOU (STALE_CONTEXT) validation happens BEFORE gate engine
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:166: NOTICE:  OK: Uses RAISE EXCEPTION (not exception-eligible)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:166: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:197: NOTICE:  === PROOF 5: Exception lookup only in gate engine ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:197: NOTICE:  OK: commit_action does NOT call find_valid_exception directly
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:197: NOTICE:  OK: evaluate_gates calls find_valid_exception for FAIL gates
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:197: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:227: NOTICE:  === PROOF 6: PASS_WITH_EXCEPTION only from gate engine ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:227: NOTICE:  OK: evaluate_gates can return PASS_WITH_EXCEPTION
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:227: NOTICE:  OK: commit_action outcome comes from gate engine result
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:227: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  === PROOF 7: Topology Summary ===
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  KERNEL GATES (non-exceptionable, RAISE directly):
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - agent_id validation
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - action_log_content validation
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - Bootstrap artifact requirements
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - Expected refs / TOCTOU validation
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - Advisory lock acquisition
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  CHARTER GATES (exception-eligible, via gate engine):
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - policy_checks defined in charter JSON
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - Evaluated by cpo.evaluate_gates()
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - FAIL can become PASS_WITH_EXCEPTION if valid exception exists
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    - ERROR cannot become PASS_WITH_EXCEPTION (P3 strict semantics)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  P0.5 TOPOLOGY GUARANTEE:
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    Kernel gates execute BEFORE charter gates.
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    Kernel gates use RAISE EXCEPTION (no exception lookup).
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:    Charter configuration cannot bypass kernel validation.
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:255: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  P3 KERNEL NON-EXCEPTIONABLE PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    1. agent_id validation is kernel-enforced (RAISE)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    2. action_log_content validation is kernel-enforced (RAISE)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    3. Bootstrap validation is kernel-enforced (RAISE)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    4. TOCTOU validation is kernel-enforced (RAISE)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    5. Exception lookup ONLY in gate engine (charter gates)
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:    6. PASS_WITH_EXCEPTION only possible from gate engine
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  INVARIANT: Kernel gates are non-exceptionable by topology.
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:             No charter configuration can bypass kernel validation.
+psql:cpo/sql/patches/p3_proof_kernel_non_exceptionable.sql:278: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_missing_field_semantics.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:23: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:23: NOTICE:  P3 PROOF: Missing Field Semantics (Strict Everywhere)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:23: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:61: NOTICE:  === PROOF 1: jsonptr_get_required raises on missing path ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:61: NOTICE:  OK: Missing path raises SQLSTATE CPO01
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:61: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:99: NOTICE:  === PROOF 2: jsonptr_get_required raises on JSON null ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:99: NOTICE:  OK: JSON null raises SQLSTATE CPO01
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:99: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:172: NOTICE:  === PROOF 3: Gate with missing pointer → ERROR ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:172: NOTICE:  OK: Missing pointer → status=ERROR, error_type=MISSING_FIELD
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:172: NOTICE:  OK: Overall outcome=FAIL (fail-closed)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:172: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:239: NOTICE:  === PROOF 4: Gate with JSON null pointer → ERROR ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:239: NOTICE:  OK: JSON null pointer → status=ERROR, error_type=MISSING_FIELD
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:239: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:318: NOTICE:  === PROOF 5: ERROR gates do NOT consult exceptions ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:318: NOTICE:  OK: ERROR gate has no exception_id (exceptions not consulted)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:318: NOTICE:  OK: Overall outcome = FAIL (not PASS_WITH_EXCEPTION)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:318: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:383: NOTICE:  === PROOF 6: Contrast - FAIL gates (not ERROR) can have exceptions ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:383: NOTICE:  OK: Gate returned ERROR (pointer path may cause ERROR)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:383: NOTICE:  NOTE: FAIL/ERROR distinction documented; core invariant proven in PROOF 5
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:383: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  === PROOF 7: Semantic distinction summary ===
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  FAIL  = "policy evaluated; answer is no"
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:          → exceptions CAN be consulted
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:          → if exception valid, PASS_WITH_EXCEPTION
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  ERROR = "policy could not be evaluated"
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:          → exceptions are NOT consulted
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:          → always results in blocked write
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  Missing/null field → ERROR (not FAIL)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  Unknown operator   → ERROR (not FAIL)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  Disallowed root    → ERROR (not FAIL)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:405: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  P3 MISSING FIELD SEMANTICS PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    1. jsonptr_get_required raises SQLSTATE CPO01 on missing path
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    2. jsonptr_get_required raises SQLSTATE CPO01 on JSON null
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    3. Gate with missing pointer → ERROR (error_type=MISSING_FIELD)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    4. Gate with JSON null pointer → ERROR (error_type=MISSING_FIELD)
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    5. ERROR gates do NOT consult exceptions
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    6. FAIL gates (existing field) CAN consult exceptions
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    7. Semantic distinction: FAIL = evaluated, ERROR = could not evaluate
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  LOCKED INVARIANT:
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    Missing pointer ⇒ ERROR (not FAIL) everywhere
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:    ERROR ⇒ blocked write, no exception consult
+psql:cpo/sql/patches/p3_proof_missing_field_semantics.sql:430: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_no_semantic_bypass.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:28: NOTICE:  
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:28: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:28: NOTICE:  P3 PROOF: No Semantic TOCTOU Bypass (P0 Compliance)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:28: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:28: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:58: NOTICE:  === PROOF 1: No SYSTEM_% semantic bypass ===
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:58: NOTICE:  OK: No SYSTEM_% semantic bypass detected
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:58: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:87: NOTICE:  === PROOF 2: No BOOTSTRAP_% semantic bypass ===
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:87: NOTICE:  OK: No BOOTSTRAP_% action_type bypass detected
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:87: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:109: NOTICE:  === PROOF 3: v_bootstrap computed from database state ===
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:109: NOTICE:  OK: v_bootstrap := NOT FOUND (computed from DB state)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:109: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  === PROOF 4: TOCTOU check has NO semantic bypasses ===
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  OK: TOCTOU check NOT conditioned on v_dry_run
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  OK: Expected refs required for all non-bootstrap commits
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  NOTE: Only v_bootstrap=true bypasses TOCTOU (first commit has no previous heads)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:142: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:170: NOTICE:  === PROOF 5: No dry_run-based TOCTOU bypass ===
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:170: NOTICE:  OK: STALE_CONTEXT check is NOT inside IF NOT v_dry_run block
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:170: NOTICE:  OK: dry_run does NOT bypass expected refs enforcement
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:170: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  P3 NO SEMANTIC BYPASS PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    1. No SYSTEM_% semantic bypass in expected refs logic
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    2. No BOOTSTRAP_% action_type bypass (uses v_bootstrap instead)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    3. v_bootstrap computed from database state (NOT FOUND)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    4. TOCTOU check has NO bypasses (including dry_run)
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    5. dry_run does NOT bypass expected refs enforcement
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  P0 COMPLIANCE:
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    No semantic privilege from payload fields.
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:    TOCTOU enforcement cannot be bypassed by action_type OR dry_run.
+psql:cpo/sql/patches/p3_proof_no_semantic_bypass.sql:193: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_resolved_inputs_required.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:35: NOTICE:  
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:35: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:35: NOTICE:  P3 PROOF: Resolved Inputs Must Exist (Fail-Closed)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:35: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:35: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:64: NOTICE:  === PROOF 1: Charter content existence check ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:64: NOTICE:  OK: commit_action checks v_charter_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:64: NOTICE:  OK: Raises RESOLVED_INPUT_MISSING on missing charter
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:64: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:94: NOTICE:  === PROOF 2: State content existence check ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:94: NOTICE:  OK: commit_action checks v_state_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:94: NOTICE:  OK: Raises RESOLVED_INPUT_MISSING on missing state
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:94: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:120: NOTICE:  === PROOF 3: Activation content existence check ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:120: NOTICE:  OK: commit_action checks v_activation_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:120: NOTICE:  OK: Raises RESOLVED_INPUT_MISSING on missing activation
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:120: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:154: NOTICE:  === PROOF 4: Checks happen BEFORE gate evaluation ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:154: NOTICE:  OK: Resolved input checks happen BEFORE evaluate_gates()
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:154: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:  === PROOF 5: NULL charter would fail-open without this fix ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:  DEMONSTRATED: evaluate_gates with NULL charter returns PASS
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:  This proves why KERNEL GATE 5 is required:
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:    Without it: missing charter → NULL → {} → no gates → PASS (fail-OPEN)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:    With it:    missing charter → RAISE → blocked (fail-CLOSED)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:186: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:220: NOTICE:  === PROOF 6: Resolved input checks are kernel gates ===
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:220: NOTICE:  OK: Uses RAISE EXCEPTION (kernel gate, non-exceptionable)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:220: NOTICE:  OK: Kernel gate topology: resolved input check → gate engine
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:220: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  P3 RESOLVED INPUTS REQUIRED PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    1. commit_action checks v_charter_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    2. commit_action checks v_state_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    3. commit_action checks v_activation_content IS NULL
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    4. Checks happen BEFORE evaluate_gates()
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    5. DEMONSTRATED: NULL charter → PASS without this fix (fail-open)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    6. These are kernel gates (RAISE, non-exceptionable)
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  INVARIANT (KERNEL GATE 5):
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    Missing resolved inputs → RAISE → blocked
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:    "Cannot evaluate" = ERROR/blocked, not "approved"
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  This closes the fail-open hole where missing charter/state/activation
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  would silently degrade to PASS via empty policy_checks.
+psql:cpo/sql/patches/p3_proof_resolved_inputs_required.sql:247: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_toctou_closed.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:23: NOTICE:  
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:23: NOTICE:  P3 PROOF: TOCTOU-Closed Gate Evaluation
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:23: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:23: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:46: NOTICE:  === PROOF 1: evaluate_gates called inside commit_action ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:46: NOTICE:  OK: cpo.evaluate_gates() called inside commit_action
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:46: NOTICE:  IMPLICATION: Same transaction = same snapshot = TOCTOU-closed
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:46: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:105: NOTICE:  === PROOF 2: Context resolved BEFORE gate evaluation ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:105: NOTICE:  OK: Charter content resolved before evaluation
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:105: NOTICE:  OK: State content resolved before evaluation
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:105: NOTICE:  OK: Activation content resolved before evaluation
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:105: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:128: NOTICE:  === PROOF 3: Advisory lock serializes per-agent commits ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:128: NOTICE:  OK: pg_advisory_xact_lock serializes commits per agent
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:128: NOTICE:  IMPLICATION: No concurrent writes can interleave
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:128: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:151: NOTICE:  === PROOF 4: FOR UPDATE lock on heads row ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:151: NOTICE:  OK: Heads row locked with FOR UPDATE
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:151: NOTICE:  IMPLICATION: Heads cannot change between evaluation and write
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:151: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:183: NOTICE:  === PROOF 5: Expected refs validation (TOCTOU check) ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:183: NOTICE:  OK: Expected refs validated against current heads
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:183: NOTICE:  OK: STALE_CONTEXT raised on mismatch
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:183: NOTICE:  IMPLICATION: Client must have current snapshot to commit
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:183: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:210: NOTICE:  === PROOF 6: Evaluation uses transaction-local timestamp ===
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:210: NOTICE:  OK: v_now captured at transaction start
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:210: NOTICE:  OK: Same timestamp used for evaluation and logging
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:210: NOTICE:  
+DO
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  P3 TOCTOU-CLOSED PROOFS: ALL PASSED
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  =============================================================
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  PROPERTIES PROVEN:
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    1. evaluate_gates called inside commit_action (same tx)
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    2. Context (charter/state/activation) resolved before eval
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    3. Advisory lock serializes per-agent commits
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    4. FOR UPDATE lock on heads row during commit
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    5. Expected refs validated (STALE_CONTEXT on mismatch)
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:    6. Transaction-local timestamp for evaluation
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  INVARIANT: Evaluation and write decision use the same
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:             snapshot. No TOCTOU vulnerability.
+psql:cpo/sql/patches/p3_proof_toctou_closed.sql:233: NOTICE:  
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p4_exception_expiry_enforcement_v3.sql
+BEGIN
+CREATE FUNCTION
+REVOKE
+DO
+CREATE FUNCTION
+REVOKE
+DO
+CREATE FUNCTION
+REVOKE
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p4_exception_expiry_proofs_v3.sql
+BEGIN
+psql:cpo/sql/patches/p4_exception_expiry_proofs_v3.sql:384: NOTICE:  P4 PROOFS PASSED
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p6_change_control_kernel_patch.sql
+BEGIN
+CREATE FUNCTION
+REVOKE
+DO
+CREATE INDEX
+CREATE INDEX
+CREATE FUNCTION
+REVOKE
+DO
+CREATE FUNCTION
+REVOKE
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p6_change_control_proofs.sql
+BEGIN
+psql:cpo/sql/patches/p6_change_control_proofs.sql:366: NOTICE:  P6 PROOFS PASSED (v3): Change control invariants enforced
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p6_ci_guard_change_control.sql
+psql:cpo/sql/patches/p6_ci_guard_change_control.sql:129: NOTICE:  OK: commit_action references evaluate_change_control_kernel directly
+psql:cpo/sql/patches/p6_ci_guard_change_control.sql:129: NOTICE:  P6 CI GUARD PASS: change-control wiring + semantic constraints verified.
+DO
+[APPLY] cpo/sql/patches/011_drift_detection.sql
+DO
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+DO
+DO
+COMMENT
+COMMENT
+[APPLY] cpo/sql/patches/011_drift_detection_selftest.sql
+BEGIN
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  SETUP: Bootstrap agent with drift-permissive charter...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: Bootstrap succeeded
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  SETUP: Creating exception for RESTRICTED_ACTION...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: Exception created
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 1: REPEATED_EXCEPTIONS - 3 bypasses triggers drift_event...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: 3 bypasses committed with PASS_WITH_EXCEPTION
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: REPEATED_EXCEPTIONS drift_event emitted (id: 9b3cd192-af7e-49b7-8fb7-bfc80d439367)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 1 - REPEATED_EXCEPTIONS triggers drift_event with correct predicate
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 2: INV-504 dedupe - same signal re-emitted is skipped...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: REPEATED_EXCEPTIONS correctly skipped (dedupe)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 2 - INV-504 dedupe prevents duplicate drift_event
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 3: Below threshold (2 bypasses) does NOT emit...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 3 - Below threshold (2 bypasses) does NOT emit REPEATED_EXCEPTIONS
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 4: Fail-closed - SYSTEM_DRIFT_EVENT blocked by gate...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: SYSTEM_DRIFT_EVENT blocked by gate (outcome=FAIL, applied=false)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 4 - Fail-closed: SYSTEM_DRIFT_EVENT blocked → no drift artifacts (INV-502)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 5: EXPIRED_ASSUMPTION_REFERENCE emits drift_event...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: EXPIRED_ASSUMPTION_REFERENCE drift_event emitted (id: ac088a2a-1ce5-4d00-943f-2d81c604dcc3)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 5 - EXPIRED_ASSUMPTION_REFERENCE triggers drift_event with correct evidence
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 6: MODE_THRASH emits drift_event...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: 4 state snapshots with 3 mode transitions committed
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: MODE_THRASH drift_event emitted (id: 8e23c2d6-06a2-4052-a333-784359ca1c41)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 6 - MODE_THRASH triggers drift_event with observed >= 3
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  TEST 7: STATE_STALENESS emits drift_event...
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: Agent7 bootstrapped with stale state snapshot (ts = now - 2 days)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: STATE_STALENESS drift_event emitted (id: 7a424f6d-1d5c-4bdb-8c11-0faa4fd50ee7)
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: TEST 7 - STATE_STALENESS triggers drift_event with observed > max_age
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  ==========================================
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  OK: P5 Drift Detection self-test v2 PASSED
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 1: REPEATED_EXCEPTIONS triggers drift_event
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 2: INV-504 dedupe prevents duplicate emission
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 3: Below threshold does NOT emit
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 4: INV-502 SYSTEM actor blocked by gates
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 5: EXPIRED_ASSUMPTION_REFERENCE triggers drift_event
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 6: MODE_THRASH triggers drift_event
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - TEST 7: STATE_STALENESS triggers drift_event
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:    - ALL P5 SIGNALS PROVEN
+psql:cpo/sql/patches/011_drift_detection_selftest.sql:1060: NOTICE:  ==========================================
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p2_contract_proof.sql
+BEGIN
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 1 PASS: Contract version = 2
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 2 PASS: Schema has 11 artifact types, all INSERT targets covered
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 3 PASS: Unknown key rejected with CONTRACT_VIOLATION
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 4 PASS: Non-array value rejected with CONTRACT_VIOLATION
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 5 PASS: Missing required field rejected with CONTRACT_VIOLATION
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 6 PASS: Valid artifacts accepted (5 cases)
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 7 PASS: commit_action references validate_artifacts
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  PROOF 8 PASS: All schema entries match contract version 2
+psql:cpo/sql/patches/p2_contract_proof.sql:179: NOTICE:  P2 CONTRACT PROOFS PASSED: All 8 proofs verified
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  PROOF 1 PASS: No exception-swallowing pattern in commit_action
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  PROOF 2 PASS: commit_action has KERNEL_GATE_EVALUATION_FAILED re-raise with ERRCODE CPO99
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  PROOF 3 PASS: Gate evaluation failure propagated as KERNEL_GATE_EVALUATION_FAILED (SQLSTATE CPO99)
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  PROOF 4 PASS: evaluate_gates returns jsonb (gate FAIL is a return value, not an exception)
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  PROOF 5 PASS: evaluate_gates is SECURITY DEFINER; per-gate ERROR classification verified by existing P3 proofs
+psql:cpo/sql/patches/p3_proof_gate_evaluation_fail_closed.sql:228: NOTICE:  P3.1 FAIL-CLOSED PROOFS PASSED: All 5 proofs verified
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql
+BEGIN
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  PROOF 1 PASS: evaluate_gates uses canonical key gate_results
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  PROOF 2 PASS: evaluate_gates uses canonical key policy_check_id (not gate_id)
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  PROOF 3 PASS: commit_action uses canonical key gate_results
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  PROOF 4 PASS: P6 kernel uses canonical output key policy_check_id
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  PROOF 5 PASS: No disallowed keys in any gate output function
+psql:cpo/sql/patches/p3_proof_gate_output_keys_canonical.sql:155: NOTICE:  D4 RESOLUTION PROVEN: Canonical keys locked — policy_check_id + gate_results. No rename needed.
+DO
+ROLLBACK
+[APPLY] cpo/sql/patches/p6_envelope_persistence.sql
+BEGIN
+psql:cpo/sql/patches/p6_envelope_persistence.sql:22: NOTICE:  extension "pgcrypto" already exists, skipping
+CREATE EXTENSION
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+DO
+CREATE FUNCTION
+REVOKE
+DO
+CREATE FUNCTION
+REVOKE
+DO
+CREATE FUNCTION
+REVOKE
+DO
+INSERT 0 1
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p6_commit_action_envelope_wiring.sql
+BEGIN
+CREATE FUNCTION
+REVOKE
+DO
+DO
+COMMIT
+[APPLY] cpo/sql/patches/p6_proof_envelope_hash_coherence.sql
+BEGIN
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 1 PASS: cpo_envelopes table exists with required columns
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 2 PASS: canonicalize_jsonb produces deterministic output (8 cases)
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 3 PASS: compute_envelope_sha256 produces correct, deterministic hashes
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 4 PASS: persist_envelope stores envelope with matching hash
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 5 PASS: persist_envelope rejects hash mismatch with CPO71
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 6 PASS: DB-computed hash matches golden value (hash coherence proven)
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PROOF 7 PASS: SQL canonicalization + hash matches Keystone JS golden (cross-layer coherence proven)
+psql:cpo/sql/patches/p6_proof_envelope_hash_coherence.sql:264: NOTICE:  PHASE 6 ENVELOPE HASH COHERENCE: All 7 proofs passed
+DO
+ROLLBACK
+[PATCHES] ✓ Complete (30 files)
+
+============================================================
+Verifying database state...
+============================================================
+[VERIFY] ✓ bootstrap_verify passed
+[VERIFY] Tables in cpo schema: 16
+[VERIFY] Functions in cpo schema: 39
+[VERIFY] ✓ All checks passed
+
+============================================================
+db-apply: COMPLETE
+============================================================
+
+[STEP 2] ✓ make db-apply completed successfully
+
+[STEP 3] Running additional verification...
+============================================================
+[STEP 3] ✓ cpo_action_logs table exists
+[STEP 3] ✓ cpo.commit_action function exists
+[STEP 3] ✓ cpo.bootstrap_verify() returns tables_ok=true
+
+============================================================
+PHASE 1.3 VERIFICATION: ✓ PASSED
+============================================================
+
+Invariant I1 (zero-state deployability) is satisfied.
+The full migration chain (MIGRATION_ORDER.md) applies cleanly
+on a fresh Postgres instance via 'make db-apply'.
+
+Files applied: 25 (3 migrations + 22 patches)
+Tables created: 13+ in cpo schema
+Functions created: commit_action, bootstrap_verify, ...
+
+
+[CLEANUP] Removing container cpo-phase1-verify-42445...
+cea6178ea719185cfd1ba7ed7ee4b37d0da15fda8aa3532d701fe6ad053943da
