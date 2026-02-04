@@ -3,7 +3,7 @@
   "canon_version": 1,
   "integrity": {
     "manifest_file": "REPO_MANIFEST.txt",
-    "manifest_sha256": "dc79bc9ee2d412834d240b75e90cc13b0f5abffbec0e4074501a0981179ae263",
+    "manifest_sha256": "f736b0df767a8c99d29788fc824471806cdb2e9d8943116f0dbbf7133a1bc5ed",
     "payload_definition": {
       "excluded_files": [
         "AUDIT_STAMP.json",
@@ -13,10 +13,10 @@
       ],
       "excluded_reason": "Authority/closeout metadata is excluded from payload_root_hash to avoid self-referential hashing cycles."
     },
-    "payload_file_count": 194,
+    "payload_file_count": 195,
     "payload_hash_algorithm": "sha256",
-    "payload_root_hash": "105cdfc0bdaf192b9b9e90e703dca3611c558f5df52a8ee70296a743428b58da",
-    "repo_file_count": 198
+    "payload_root_hash": "fcf8e905198dff5929a743b8699cbaee44f968ba7be3fc899765f1732ba4fd57",
+    "repo_file_count": 199
   },
   "phase_status": {
     "phase_0_repo_layout": "PRESENT",

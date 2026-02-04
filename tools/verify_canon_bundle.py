@@ -60,10 +60,35 @@ def load_json(path: Path) -> dict:
 
 
 def list_repo_files() -> List[str]:
+    # Scan scope: canonical repo contents, not VCS metadata or generated evidence/build outputs.
+    exclude_roots = {".git", "evidence"}
+    exclude_prefixes = {"workflow-graph/node_modules"}
+
     files: List[str] = []
     for p in REPO_ROOT.rglob("*"):
-        if p.is_file():
-            files.append("./" + p.relative_to(REPO_ROOT).as_posix())
+        if not p.is_file():
+            continue
+
+        rel = p.relative_to(REPO_ROOT).as_posix()
+
+        # Drop Python bytecode artifacts anywhere
+        if rel.endswith(".pyc"):
+            continue
+        if "/__pycache__/" in ("/" + rel + "/"):
+            continue
+
+        first = rel.split("/", 1)[0]
+
+        # Root excludes
+        if first in exclude_roots:
+            continue
+
+        # Prefix excludes (nested generated dirs)
+        if any(rel == pref or rel.startswith(pref + "/") for pref in exclude_prefixes):
+            continue
+
+        files.append("./" + rel)
+
     return sorted(files)
 
 

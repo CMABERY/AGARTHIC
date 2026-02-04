@@ -68,6 +68,7 @@
 ./docs/keystone/LOCKED.md
 ./docs/keystone/PHASE6_REPLAY_UI_SPEC.md
 ./meta/lexicon.yaml
+./tools/regen_integrity.py
 ./tools/verify_canon_bundle.py
 ./verify_phase1.sh
 ./workflow-graph/CHANGELOG.md
