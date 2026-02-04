@@ -8,7 +8,7 @@ Rule: When a FORGE patch is agreed in-session, either commit it
 before session end or record it here. No chat-only corrections.
 
 ## PATCH-001 — Triple-coupling to shell-canonical
-Target: Architecture doc (not yet in repo). Kernel confirmed clean (no triple-coupling strings).
+Target: Architecture doc (in repo as gov/ARCHITECTURE-v1.md). Kernel confirmed clean (no triple-coupling strings).
 Note: Overclaim appeared in BOOT/audit outputs and architecture documentation, not in KERNEL-v1.0 text.
 Agreed: Session 1
 Infrastructure committed: Session 3 (ad2f59b)
