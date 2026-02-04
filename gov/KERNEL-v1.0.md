@@ -118,6 +118,12 @@ These are CLOSED. Do not reopen unless a named reopener fires.
 
 **Important:** This table is a compressed index. The _proof_ that these items are sealed lives in the dossier artifacts and run directories, not in this prompt. If dossier is not supplied, mark the specific claim as **UNVERIFIED — locate artifact: [path hint]**.
 
+
+### External artifact references (dossier pointers)
+References to artifacts not present in this repo (e.g., `proposal.schema.json`) are pointers, not evidence.
+Enforcement/coupling claims are valid only when the referenced artifact exists in-repo (or a versioned companion repo)
+at a pinned hash/commit and is mechanically checked.
+
 ### 3.3 Active open items (post-HGHP world)
 
 | ID   | Item                                  | Status               | Blast radius | Notes                                      |
