@@ -8,7 +8,7 @@ This is the single authoritative register of open governance items.
   Priority: HIGH (upgraded from MEDIUM, Session 3)
   Blast radius: Compounds every session
   Coupled with: #10
-  Problem: Governance docs exist only in chat history, not in repo.
+  Problem: Governance docs historically lived only in chat history; now imported into repo. Remaining work is mechanical freshness checks + ongoing calibration.
   Closure: Docs committed to gov/, mechanical freshness check, FORGE_PENDING rule.
 
 #10 Language Calibration
@@ -33,3 +33,7 @@ C-2   Historical validation          2026-02-04  Session 2
 #2    Exit-code capture              2026-02-04  Session 2
 #9    pipefail in Make targets       2026-02-04  Session 2
 DRIFT-004  Enum coupling overclaim   2026-02-04  Session 3
+PATCH-001  Architecture triple-coupling withdrawn   2026-02-04  commit 36e44b4
+PATCH-002  HGHP S1.4 coupling claims withdrawn      2026-02-04  commit 8d0b349
+DRIFT-001  C-5 contradiction resolved (HGHP v2.2)   2026-02-04  commit 87b9b6d
+DRIFT-005  HGHP coupling conflict resolved          2026-02-04  commit 0f09674
