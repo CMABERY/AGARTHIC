@@ -244,7 +244,7 @@ Most systems try to restrict intelligence to maintain safety. This architecture 
 | 3 | Token forgery / replay | **Proven** (HMAC-bound consumption proofs) |
 | 4 | Identity spoofing | **Proven** (handler-stamped provenance, input-key validation) |
 | 5 | TOCTOU attacks | **Proven** (precondition hashes baked into tokens) |
-| 6 | Skill mutation / parameter creep | Active (schemas canon-locked; triple-coupling named; reinforced by 4 assessments) |
+| 6 | Skill mutation / parameter creep | Active (schemas canon-locked; shell-canonical enum enforcement named (triple-coupling WITHDRAWN); reinforced by 4 assessments) |
 | 7 | Bridge / handler compromise | **Proven** (stateless, runtime self-check via SHA256SUMS) |
 | 8 | Supply chain / dependency attacks | Active (dependency pinning, hash verification) |
 | 9 | Data exfiltration via read-only channels | Design only (not enforced at platform) |
@@ -766,7 +766,7 @@ Here's where I landed after exhaustive search through all five uploaded artifact
 
 **What the corpus tells me about the intent-type system:**
 
-The architecture references a closed-world schema with intent_type + payload validation, triple coupling (schema → handler allowed list → TS wrapper enum), and an action registry at the token issuance layer. The concrete pipeline surfaces are named: stamp_proposal_v2.py, validate_proposal.py, review_proposal_v1.py. CONF-9B-001 proves unknown intent types are DENIED.
+The architecture references a closed-world schema with intent_type + payload validation, WITHDRAWN: triple-coupling (schema → handler allowlist → TS wrapper enum) is NOT implemented in this repo; enum enforcement is shell-canonical via gov/intent_enum.v1.txt + gov/verify_intent_enum.sh, and an action registry at the token issuance layer. The concrete pipeline surfaces are named: stamp_proposal_v2.py, validate_proposal.py, review_proposal_v1.py. CONF-9B-001 proves unknown intent types are DENIED.
 
 **What the uploaded zip actually contains:** V3 closure infrastructure — v3_closure_pipeline.sh (reseal, deploy, bundle, verify, closeout) and verify_phase1.sh (PG15 zero-state deployability proof). These are excellent operational scripts and confirm the repo structure (REPO_MANIFEST.txt, AUDIT_STAMP.json, VERSION_LOCK.json, cpo schema, cpo.commit_action, cpo.bootstrap_verify()). But they don't contain the intent-type enum — they operate at the canon-sealing layer, not the proposal-validation layer.
 
@@ -774,7 +774,7 @@ The architecture references a closed-world schema with intent_type + payload val
 
 - validate_proposal.py (the schema validator in the proposal pipeline)
 - The handler allowed list (whatever file the bridge checks intent_type against)
-- The TS wrapper enum (the TypeScript side of the triple coupling)
+- TS wrapper enum (WITHDRAWN: TS-layer enum coupling not implemented in this repo)
 - Or the commit_action_v2.py action registry (if intent types map 1:1 to action types)
 
 If you can drop any of those, or just run something like grep -r 'intent_type\|IntentType\|action_type\|ActionType' ~/projects/gcp/ --include='*.py' --include='*.ts' from your repo root and paste the output, I'll have what I need to build the §1.4 matrix immediately. Everything else is staged and ready.
@@ -800,7 +800,7 @@ This is the “matrix skeleton” that becomes authoritative the moment you past
 *   **Intent → disqualifiers (global + intent-specific)**
 *   **Intent → escalation rules**
 
-This is aligned with your closed-world claim: unknown intent types must be denied (CONF-9B-001), and the triple-coupling surface must remain explicit (schema → handler allowlist → TS wrapper enum).
+This is aligned with your closed-world claim: unknown intent types must be denied (CONF-9B-001), and the enum enforcement surface must remain explicit (shell-canonical: gov/intent_enum.v1.txt + gov/verify_intent_enum.sh). Schema/TS triple-coupling claims are WITHDRAWN.
 
 OpenClaw\_GCP\_Complete\_Synthesis…
 
@@ -1631,7 +1631,7 @@ Also open the proposal dropper (often contains the “known intent”):
 sed -n '1,240p' ~/gcp_conf/proposals/bin/drop_invoice_reconcile_proposal_v1.py
 ```
 
-### B) Bridge handler allowlist + TS wrapper enum (triple-coupling)
+### B) Enum coupling claim (PATCH-001: triple-coupling WITHDRAWN; shell-canonical enforcement only)
 
 These are the other two coupling legs:
 
@@ -2567,7 +2567,7 @@ From the **authoritative coupling surfaces**, the **current closed-world intent 
 *   `EVIDENCE_INGEST_PROPOSE`
 *   `INVOICE_INPUTS_VALIDATE_PROPOSE`
 
-This is independently enforced in **both** the Python handler allowlist (`EXPECTED_INTENTS`) and the TS tool parameter schema enum (`PARAMS_SCHEMA.properties.intent_type.enum`), and the handler additionally **schema-drift checks** that the schema’s envelope enum and `intents{}` keys match the same set. That’s triple-coupling + drift-tripwire in practice.
+This is independently enforced in **both** the Python handler allowlist (`EXPECTED_INTENTS`) and the TS tool parameter schema enum (`PARAMS_SCHEMA.properties.intent_type.enum`), and the handler additionally **schema-drift checks** that the schema’s envelope enum and `intents{}` keys match the same set. WITHDRAWN: schema/TS triple-coupling + drift-tripwire is not implemented in this repo. Actual enforcement is shell-canonical: gov/intent_enum.v1.txt is the canonical source and gov/verify_intent_enum.sh is the mechanical verifier.
 
 HGHP\_v1\_Section\_1\_4\_Instantiati…
 
@@ -4198,7 +4198,7 @@ Value ratio: **~100%** (nearly every step closed a closure condition or produced
 | # | Assumption | Formed when | Still valid? | Evidence | Risk if wrong |
 | --- | --- | --- | --- | --- | --- |
 | 1 | HGHP closure must be artifact-backed, not narrative | Early | ✅ | Run dir contains summaries, results, enforcement evidence, training evidence, closure record, exit artifact (per your listing) | High (false closure would poison governance posture) |
-| 2 | Intent enum is closed-world and triple-coupled | During §1.4 instantiation | ✅ | Enum existed in Python handler + TS tool schema + schema drift tripwire in handler (your extracts) | High (drift → silent expansion / review bypass) |
+| 2 | Intent enum is closed-world (shell-canonical); triple-coupling WITHDRAWN | During §1.4 instantiation | ✅ | Enum existed in Python handler + TS tool schema + schema drift tripwire in handler (your extracts) | High (drift → silent expansion / review bypass) |
 | 3 | Unknown fields must be mechanically detectable | Triggered by C-3 divergence | ✅ | v2 adds allowed-key blocks + unknown-key ⇒ DENY rule | Medium (without it, review becomes attention-based) |
 | 4 | C-4 controls are enforceable at a single chokepoint | Pre-C-4 | ✅ | Fault injection 8/8 passed; evidence artifact written (per your listing) | Medium (overload pressure remains primary procedural attack) |
 | 5 | HOLD vs DENY distinction is essential | C-3/C-5 | ✅ | Training record shows first HOLD→retest DENY; rule reinforced | Medium (queue churn + ambiguity under pressure) |
@@ -4460,7 +4460,7 @@ Value ratio: 17/20 = 85% (HIGH: 14, MEDIUM: 3)
 
 | # | Assumption | Formed when | Still valid? | Evidence | Risk if wrong |
 |---|---|---|---|---|---|
-| 1 | The intent enum is exactly 3 values | Prior session (enum provided by operator) | ✅ | Sealed in scope ledger, hash b21c33c1…, verified against proposal.schema.json | HIGH — matrix coverage depends on it. Mitigated: drift tripwire enforces coupling. |
+| 1 | The intent enum is exactly 3 values | Prior session (enum provided by operator) | ✅ | Sealed in scope ledger, hash b21c33c1…, verified against proposal.schema.json | HIGH — matrix coverage depends on it. Mitigated: shell verifier enforces enum consistency (gov/verify_intent_enum.sh). Schema/TS drift-tripwire claims WITHDRAWN. |
 | 2 | All real proposals are INVOICE_RECONCILE_PROPOSE | Step 6 (discover) | ✅ | find output showed all 9 real proposals are IRP | MEDIUM — if IIVP or EIP proposals exist elsewhere, C-2 calibration is incomplete. Documented as known gap in §7.3. |
 | 3 | overload_gate_v1.py is called on every enqueue | Step 16 (patched enqueue_proposal_v1.sh) | ⚠️ | The .sh is patched, but enqueue_proposal_v1.py (Python version) was NOT patched. If anything calls the .py directly, the gate is bypassed. | HIGH — the Python enqueue path could be a side channel. |
 | 4 | proposal.schema.json is the authoritative source for allowed payload keys | Step 14 (S1.4 v2 refinement) | ✅ | User explicitly confirmed schema-derived keys per intent | LOW — schema is the canonical source by architecture. |
