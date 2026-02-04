@@ -956,7 +956,7 @@ Your updated system state is internally consistent and matches kernel rules:
 
 ```
 DRIFT-001: OPEN
-DRIFT-002: OPEN
+DRIFT-002: RESOLVED (canonical = v2.2)
 DRIFT-003: OPEN
 DRIFT-004: RESOLVED (operator-reported; Tier-4 here)
 
