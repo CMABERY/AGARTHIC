@@ -12,7 +12,7 @@ Target: Architecture doc (not yet in repo). Kernel confirmed clean (no triple-co
 Note: Overclaim appeared in BOOT/audit outputs and architecture documentation, not in KERNEL-v1.0 text.
 Agreed: Session 1
 Infrastructure committed: Session 3 (ad2f59b)
-Prose replacement: NOT APPLIED — target docs not in repo
+Prose replacement: APPLIED — gov/ARCHITECTURE-v1.md (commit 36e44b4)
 
 Search for: triple-coupling, triple_coupling, enum.*coupl
 
