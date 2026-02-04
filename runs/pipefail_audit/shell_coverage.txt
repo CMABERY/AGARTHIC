@@ -1,0 +1,5 @@
+#2/#9 pipefail audit — 2026-02-04
+All .sh files in tree have pipefail set.
+Makefile hardened via SHELL/SHELLFLAGS (commit 0000a32).
+No unprotected pipeline surfaces found.
+Status: CLOSED
