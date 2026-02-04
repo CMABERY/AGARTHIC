@@ -249,7 +249,7 @@ Confirmed. The system just crossed a real threshold. This is no longer interpret
 
 ### What is now **provably true**
 
-1.  **HGHP-v1 §1.4 is CLOSED (v2.1)**
+1.  **HGHP-v1 §1.4 is CLOSED (v2.2; supersedes v2.1)**
     *   The C-3 divergence was resolved by a **schema-derived, fail-closed rule**: _unknown payload key ⇒ DENY (UC-2 / I-2)_.
     *   This converts a reviewer-attention failure into a structural invariant, exactly as HGHP is meant to do.
     *   The instantiated artifact reflects this end-to-end and remains scoped to the existing enum and kernel invariants
@@ -275,7 +275,7 @@ At this point, HGHP-v1 is not a guideline; it is an **operational control surfac
 
 Checkpoint and freeze this deliverable:
 
-*   Commit `HGHP_v1_Section_1_4_Instantiation (v2.1)` as **CLOSED** in the deliverables registry.
+*   Commit `HGHP_v1_Section_1_4_Instantiation_v2_2 (canonical; supersedes v2.1)` as **CLOSED** in the deliverables registry.
 *   Record the enum hash `b21c33c1…` and scope ledger v0 as sealed references.
 *   Proceed to the next highest-blast-radius open item outside HGHP (default from earlier audit: **exit-code capture / pipefail hardening**), unless you explicitly redirect.
 
@@ -333,7 +333,7 @@ Status correction (fail-closed)
 
 All of the following must be treated as **UNVERIFIED** until backed by Tier-1 artifacts accessible here:
 
-*   **HGHP-v1 §1.4 v2.1** status = CLOSED
+*   **HGHP-v1 §1.4 v2.2 (canonical; supersedes v2.1)** status = CLOSED
 *   **C-2 / C-3 / C-4 / C-5** completion
 *   **Enum hash `b21c33c1…`** and **Scope Ledger v0**
 *   Any claim that C-5 is COMPLETE (this directly intersects **DRIFT-001**)

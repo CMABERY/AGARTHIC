@@ -10,7 +10,7 @@ Resolution: Supplied HGHP v1 S1.4 instantiation v2.2; C-5 corrected to COMPLETE 
 Evidence: gov/HGHP-v1-S1.4-INSTANTIATION.md (Status CLOSED v2.2; C-5 COMPLETE; revision history notes editorial fix).
 
 ## DRIFT-002 — Version pointer mismatch (v2.1 vs v2.2)
-Status: OPEN
+Status: RESOLVED (canonical = v2.2; stale v2.1 pointers corrected)
 Detected: Session 1
 Impact: LOW. Ambiguous which version is authoritative.
 Resolution: Pick one version, update all references, commit.

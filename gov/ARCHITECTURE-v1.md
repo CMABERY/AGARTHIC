@@ -7675,6 +7675,7 @@ Both sessions independently arrive at the same root cause analysis and the same 
 ---
 
 ## 5. Cross-Reference Against Canonical S1.4 v2.1
+**FORGE note:** S1.4 v2.2 is the canonical instantiation going forward; v2.1 is retained only as provenance.
 
 The inline HGHP-v1-S1.4 document claims version 2.1 ("post-CHK-2 FORGE patch") and status CLOSED. Cross-referencing against both session exports:
 
