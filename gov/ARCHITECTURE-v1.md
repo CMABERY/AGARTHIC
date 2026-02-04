@@ -6177,7 +6177,7 @@ chmod +x ~/gcp_conf/proposals/bin/enqueue_proposal_v1.py
 echo "✓ Rewrote enqueue_proposal_v1.py (clean gate enforcement)"
 ```
 
-This obliterates any hidden corruption introduced by previous patch attempts, and it makes it structurally impossible for the gate to be “present but not executed.”
+This obliterates any hidden corruption introduced by previous patch attempts, and it makes it structurally impossible, for governed actions via tested paths, for the gate to be “present but not executed.”
 
 * * *
 
