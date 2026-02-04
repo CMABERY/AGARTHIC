@@ -2,11 +2,12 @@
 As-of: 2026-02-04 | Session: 3 | Branch: v4.3-doc-fix-flat-bundle
 
 ## DRIFT-001 — HGHP C-5 closure contradiction
-Status: OPEN
+Status: RESOLVED (HGHP v2.2 editorial fix)
 Detected: Session 1
 Claimed: C-5 marked OPEN while document asserts all six conditions met.
 Impact: HGHP-v1 closure status indeterminate until C-5 resolved.
-Resolution: Supply updated S1.4 artifact (verification Item A).
+Resolution: Supplied HGHP v1 S1.4 instantiation v2.2; C-5 corrected to COMPLETE and doc marked CLOSED.
+Evidence: gov/HGHP-v1-S1.4-INSTANTIATION.md (Status CLOSED v2.2; C-5 COMPLETE; revision history notes editorial fix).
 
 ## DRIFT-002 — Version pointer mismatch (v2.1 vs v2.2)
 Status: OPEN
