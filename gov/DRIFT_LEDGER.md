@@ -32,7 +32,7 @@ Residual: FORGE prose replacement has no committable target. See FORGE_PENDING.m
 
 ## DRIFT-005 — HGHP S1.4 asserts schema/TS coupling (conflicts with PATCH-001)
 
-Status: OPEN
+Status: RESOLVED (PATCH-002 applied to HGHP S1.4)
 Detected: Session 3 (post PATCH-001 landing)
 
 Claimed: HGHP v1 S1.4 instantiation asserts enum sources in TypeScript and schema
