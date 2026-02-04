@@ -874,7 +874,7 @@ grep -n "triple.coupling\|triple_coupling\|b21c33c1\|enum.*coupl" \
 **Updated system state:**
 
 DRIFT-001: OPEN (HGHP C-5 contradiction — unresolved)
-DRIFT-002: OPEN (v2.1 vs v2.2 pointer mismatch)
+DRIFT-002: RESOLVED (canonical = v2.2; v2.1 retained as provenance)
 DRIFT-003: OPEN (no single authoritative open-items register)
 DRIFT-004: RESOLVED (operator-reported; Tier-4 from this environment)
   Enum: shell-canonical + verifier. Non-claim: schema/TS legs.
