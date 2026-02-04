@@ -122,8 +122,8 @@ These are CLOSED. Do not reopen unless a named reopener fires.
 
 | ID   | Item                                  | Status               | Blast radius | Notes                                      |
 |------|---------------------------------------|-----------------------|--------------|----------------------------------------------|
-| #2   | Exit-code capture correctness         | HARDENED, not impl.   | HIGH         | Make targets, pipelines, pipefail, PIPESTATUS |
-| #9   | pipefail in Make targets              | HARDENED, not impl.   | HIGH         | Coupled with #2                              |
+| #2   | Exit-code capture correctness         | CLOSED (0000a32, 85a35bf) | HIGH         | Make targets, pipelines, pipefail, PIPESTATUS |
+| #9   | pipefail in Make targets              | CLOSED (0000a32, b2e5f6f, 85a35bf) | HIGH         | Coupled with #2                              |
 | #7   | Documentation freshness discipline    | Open                  | MEDIUM       | Snapshot rules + as-of + hash seals          |
 | #10  | Language calibration                  | Open                  | MEDIUM       | Scope "structurally impossible" correctly     |
 | ECT  | ECT-v1 binding verification           | Conditional           | MEDIUM       | contract_binding.json vs live executors       |
@@ -226,7 +226,7 @@ If the operator gives no direction, default to this sequence. Each phase has exp
 | Blast radius       | What breaks if this is done wrong                                |
 
 **Default recommendation** (unless operator overrides):
-Implement HARDENED items **#2/#9** (exit-code capture + pipefail), because they protect the meaning of Tier-1 truth across _all_ future work.
+HARDENED items **#2/#9** (exit-code capture + pipefail) are now CLOSED (0000a32, b2e5f6f, 85a35bf); they protect the meaning of Tier-1 truth across _all_ future work.
 
 **Exit:** Operator selects workstream (or default proceeds if operator delegates).
 
