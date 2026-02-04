@@ -166,3 +166,20 @@ db-proofs: ## Run all proof queries (assertions)
 		$(PSQL) -f "$$f" || exit 1; \
 	done
 	@echo "[PROOFS] ✓ All proofs passed"
+.PHONY: canon-regen canon-verify
+
+canon-regen:
+	python3 tools/regen_integrity.py
+
+canon-verify: canon-regen
+	PYTHONDONTWRITEBYTECODE=1 python3 tools/verify_canon_bundle.py
+
+
+# --- #2/#9 exit-code hardening (pipefail) ---
+SHELL := /usr/bin/env bash
+.SHELLFLAGS := -euo pipefail -c
+
+.PHONY: test-known-bad-pipeline
+test-known-bad-pipeline:
+	@echo "Expect non-zero exit (upstream failure in pipe)"
+	@python3 -c 'import sys; sys.exit(7)' | cat >/dev/null
