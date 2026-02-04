@@ -99,3 +99,14 @@ sha256sum -c REPO_HASHES.sha256
 python tools/verify_canon_bundle.py
 ```
 
+
+## Closure values (2026-02-04)
+
+Bundle: evidence/_bundles/AGARTHIC_CANON_20260204T074859Z.tar  
+Bundle SHA-256: d7e437adfe70245d8bcc8ceb024d9696cdb6e395ba3f7ca78a5a22efbfee481d  
+REPO_MANIFEST.txt sha256: cd83ab0439dd752d89d63ee301f60ec717efc3f1a17f91f030c6dcc9c8e45ae8  
+AUDIT_STAMP.json sha256: 5dd1014c78ff2d078faf348e8252fb6076764f485cd37c57797d6b86fbc4faaa  
+payload_root_hash: 529dd41bcffe1906b1fa0d48cf1bfd3343db6e23411814704d5fcf2165966955  
+Deployability proof dir: evidence/wp11_deploy_20260204T074530Z  
+
+NOTE: Bundle was produced during closure pipeline run at Git HEAD: 1af03fa11e8d4624f18375790abb8bde66dad3b7
