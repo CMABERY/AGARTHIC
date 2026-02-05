@@ -46,3 +46,12 @@ b2e5f6f #2/#9: Tier-1 evidence — pipefail test run artifacts
 
 ## Recent Governance Events
 Architecture + HGHP instantiation docs are now committed under gov/; PATCH-001 (Architecture) and PATCH-002 (HGHP) landed to withdraw schema/TS coupling claims.
+
+---
+## Update: Session 8 (2026-02-04)
+HEAD: cca143c
+Commits this session: cca143c (#10 language calibration)
+Closed: #10 (single overclaim scoped in Architecture doc line 6180)
+Decided: CHECKPOINT condensed-vs-full → keep condensed
+Remaining active: ECT (conditional), PKG (low/optional)
+Protocol imports pending: FORGE, FAULT, ALIGN, GAUGE, BOOT

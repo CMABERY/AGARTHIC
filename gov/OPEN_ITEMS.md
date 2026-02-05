@@ -4,12 +4,6 @@ This is the single authoritative register of open governance items.
 
 ## Active
 
-#10 Language Calibration
-  Priority: MEDIUM
-  Coupled with: #7
-  Problem: Strong claims (e.g. "structurally impossible") stated without evidence tier.
-  Closure: Every strong claim gets evidence-tier annotation. Address inside #7.
-
 ECT — ECT-v1 Binding Verification
   Priority: MEDIUM (conditional)
   Condition: Only if executor automation is active.
@@ -31,3 +25,7 @@ PATCH-001  Architecture triple-coupling withdrawn   2026-02-04  commit 36e44b4
 PATCH-002  HGHP S1.4 coupling claims withdrawn      2026-02-04  commit 8d0b349
 DRIFT-001  C-5 contradiction resolved (HGHP v2.2)   2026-02-04  commit 87b9b6d
 DRIFT-005  HGHP coupling conflict resolved          2026-02-04  commit 0f09674
+
+### Recently closed (this session)
+- **#10 language calibration** — CLOSED (cca143c). Sweep found one actionable overclaim in Architecture doc line 6180; scoped with governance boundary qualifier.
+- **CHECKPOINT condensed-vs-full** — DECIDED: keep condensed. Structurally complete, more context-efficient. No replacement needed.
