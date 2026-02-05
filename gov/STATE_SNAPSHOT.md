@@ -55,3 +55,12 @@ Closed: #10 (single overclaim scoped in Architecture doc line 6180)
 Decided: CHECKPOINT condensed-vs-full → keep condensed
 Remaining active: ECT (conditional), PKG (low/optional)
 Protocol imports pending: FORGE, FAULT, ALIGN, GAUGE, BOOT
+
+---
+## Update: Protocol Import Session (2026-02-04)
+HEAD: 8c0d9eb
+Commits: f3f836b, fceca53, c046be3, ed51a5e, ca01c19, 51cf8ff, 8c0d9eb
+Closed: Protocol imports (all 7 v3.0 protocols committed to gov/)
+Decided: v2.0 provenance — retain as lineage
+gov/ now contains 17 .md files: kernel, architecture, HGHP, 7 protocols (v3.0), 2 provenance (v2.0), 4 tracking docs, rationale
+Remaining active: ECT (conditional), PKG (low) — both deferred indefinitely

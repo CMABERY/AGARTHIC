@@ -29,3 +29,7 @@ DRIFT-005  HGHP coupling conflict resolved          2026-02-04  commit 0f09674
 ### Recently closed (this session)
 - **#10 language calibration** — CLOSED (cca143c). Sweep found one actionable overclaim in Architecture doc line 6180; scoped with governance boundary qualifier.
 - **CHECKPOINT condensed-vs-full** — DECIDED: keep condensed. Structurally complete, more context-efficient. No replacement needed.
+
+### Recently closed (protocol import session)
+- **Protocol imports** — CLOSED (7/7 committed). FORGE f3f836b, CHECKPOINT fceca53, DECIDE c046be3, FAULT ed51a5e, ALIGN ca01c19, GAUGE 51cf8ff, BOOT 8c0d9eb.
+- **v2.0 provenance decision** — DECIDED: retain CHECKPOINT-v2.0.md and DECIDE-v2.0.md as lineage provenance. No removal.
