@@ -54,7 +54,6 @@ Commits this session: cca143c (#10 language calibration)
 Closed: #10 (single overclaim scoped in Architecture doc line 6180)
 Decided: CHECKPOINT condensed-vs-full → keep condensed
 Remaining active: ECT (conditional), PKG (low/optional)
-Protocol imports pending: FORGE, FAULT, ALIGN, GAUGE, BOOT
 
 ---
 ## Update: Protocol Import Session (2026-02-04)
