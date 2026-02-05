@@ -1,4 +1,4 @@
-Current HEAD: 9d2d5ae
+Current HEAD: 31033a5
 
 # STATE SNAPSHOT
 As-of: 2026-02-04 | Session: 3 | Branch: v4.3-doc-fix-flat-bundle
